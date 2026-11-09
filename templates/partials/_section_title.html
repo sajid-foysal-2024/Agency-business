@@ -1,0 +1,7 @@
+{# Section heading. Params: subtitle, title, align ("center" or "left"), delay #}
+<div class="title wow fadeInUp" data-wow-delay="{{ delay|default:'0.1s' }}">
+    <div class="title-{{ align|default:'center' }}">
+        {% if subtitle %}<h5>{{ subtitle }}</h5>{% endif %}
+        <h2 class="h1">{{ title }}</h2>
+    </div>
+</div>

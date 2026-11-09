@@ -1,0 +1,6 @@
+{# Brand logo, or icon + name when no logo is uploaded. #}
+{% if site.logo %}
+<img src="{{ site.logo.url }}" alt="{{ site.brand_name }}" class="site-logo">
+{% else %}
+<span class="text-uppercase">{% if site.brand_icon %}<i class="{{ site.brand_icon }} me-1"></i>{% endif %}{{ site.brand_name }}</span>
+{% endif %}

@@ -1,0 +1,5 @@
+{# Params: links (list of {name, icon, url}), btn_class #}
+{% for link in links %}
+<a class="btn {{ btn_class|default:'btn-lg-square btn-outline-primary border-2 m-1' }}" href="{{ link.url }}"
+    target="_blank" rel="noopener" aria-label="{{ link.name }}"><i class="{{ link.icon }}"></i></a>
+{% endfor %}

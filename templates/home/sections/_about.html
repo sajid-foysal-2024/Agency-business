@@ -1,0 +1,47 @@
+{% if about %}
+<section class="container-fluid bg-secondary" id="about">
+    <div class="container">
+        <div class="row g-5 align-items-center">
+            <div class="{% if about.image %}col-lg-7{% else %}col-12{% endif %} py-5">
+                <div class="py-5">
+                    {% include "partials/_section_title.html" with subtitle=about.subtitle title=about.title align="left" %}
+
+                    {% if about.description %}
+                    <div class="mb-4 wow fadeInUp" data-wow-delay="0.2s">{{ about.description|linebreaks }}</div>
+                    {% endif %}
+
+                    {% if about.points.all %}
+                    <ul class="list-group list-group-flush mb-5 wow fadeInUp" data-wow-delay="0.3s">
+                        {% for point in about.points.all %}
+                        <li class="list-group-item bg-dark text-body border-secondary ps-0">
+                            <i class="fa-solid fa-circle-check text-primary me-1"></i> {{ point.text }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+
+                    {% if about.primary_button_text or about.secondary_button_text %}
+                    <div class="row g-3 wow fadeInUp" data-wow-delay="0.4s">
+                        {% if about.primary_button_text %}
+                        <div class="col-sm-6">
+                            <a href="{{ about.primary_button_link|default:'#' }}" class="btn btn-outline-primary border-2 py-3 w-100">{{ about.primary_button_text }}</a>
+                        </div>
+                        {% endif %}
+                        {% if about.secondary_button_text %}
+                        <div class="col-sm-6">
+                            <a href="{{ about.secondary_button_link|default:'#' }}" class="btn btn-primary py-3 w-100">{{ about.secondary_button_text }}</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% if about.image %}
+            <div class="col-lg-5 wow fadeInUp" data-wow-delay="0.5s">
+                <img class="img-fluid" src="{{ about.image.url }}" alt="{{ about.title }}" loading="lazy">
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endif %}

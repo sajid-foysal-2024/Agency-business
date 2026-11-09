@@ -1,0 +1,23 @@
+{% if testimonials %}
+<section class="container-fluid py-5 bg-secondary" id="testimonial">
+    <div class="container py-5">
+        <div class="text-center">
+            {% include "partials/_section_title.html" with subtitle=page.testimonials_subtitle title=page.testimonials_title %}
+        </div>
+        <div class="owl-carousel testimonial-carousel wow fadeInUp" data-wow-delay="0.3s">
+            {% for item in testimonials %}
+            {% if item.photo %}
+            <div class="testimonial-item text-center" data-dot="<img class='img-fluid' src='{{ item.photo.url }}' alt=''>">
+            {% else %}
+            <div class="testimonial-item text-center" data-dot="<span class='testimonial-initial'>{{ item.name|first|upper }}</span>">
+            {% endif %}
+                <i class="fa-solid fa-quote-left fa-2x text-primary mb-3"></i>
+                <p class="fs-5">{{ item.message }}</p>
+                <h5 class="text-uppercase">{{ item.name }}</h5>
+                {% if item.profession %}<span class="text-primary">{{ item.profession }}</span>{% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}

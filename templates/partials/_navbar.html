@@ -1,0 +1,20 @@
+{% url 'home:index' as home_url %}
+<nav class="navbar navbar-expand-lg navbar-dark px-lg-5">
+    <a href="{{ home_url }}" class="navbar-brand ms-4 ms-lg-0">
+        <h2 class="mb-0 text-primary">{% include "partials/_brand.html" %}</h2>
+    </a>
+    <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
+        aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+        <div class="navbar-nav mx-auto p-4 p-lg-0">
+            <a href="{{ home_url }}" class="nav-item nav-link{% if request.path == home_url %} active{% endif %}">Home</a>
+            <a href="{{ home_url }}#about" class="nav-item nav-link">About</a>
+            <a href="{{ home_url }}#services" class="nav-item nav-link">Services</a>
+            <a href="{{ home_url }}#team" class="nav-item nav-link">Team</a>
+            <a href="{{ home_url }}#testimonial" class="nav-item nav-link">Testimonial</a>
+            <a href="{{ home_url }}#newsletter" class="nav-item nav-link">Contact</a>
+        </div>
+    </div>
+</nav>

@@ -1,0 +1,35 @@
+{% if services %}
+<section class="container-fluid py-5" id="services">
+    <div class="container py-5">
+        <div class="text-center">
+            {% include "partials/_section_title.html" with subtitle=page.services_subtitle title=page.services_title %}
+        </div>
+
+        {% for service in services %}
+        {% cycle "left" "right" as side silent %}
+        <div class="service-item service-item-{{ side }}">
+            <div class="row g-0 align-items-center">
+                {% if service.image %}
+                <div class="col-md-5{% if side == 'right' %} order-md-1 text-md-end{% endif %}">
+                    <div class="service-img p-5 wow {% if side == 'right' %}fadeInLeft{% else %}fadeInRight{% endif %}" data-wow-delay="0.2s">
+                        <img class="img-fluid rounded-circle" src="{{ service.image.url }}" alt="{{ service.title }}" loading="lazy">
+                    </div>
+                </div>
+                {% endif %}
+                <div class="{% if service.image %}col-md-7{% else %}col-12 p-5{% endif %}">
+                    <div class="service-text px-5 px-md-0 py-5{% if side == 'right' %} text-md-end{% endif %} wow {% if side == 'right' %}fadeInLeft{% else %}fadeInRight{% endif %}" data-wow-delay="0.5s">
+                        <h3 class="text-uppercase">{{ service.title }}</h3>
+                        <p class="mb-4">{{ service.description|linebreaksbr }}</p>
+                        {% if service.button_link and service.button_text %}
+                        <a class="btn btn-outline-primary border-2 px-4" href="{{ service.button_link }}">
+                            {{ service.button_text }} <i class="fa-solid fa-arrow-right ms-1"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}

@@ -1,0 +1,22 @@
+{% if page.show_newsletter %}
+<section class="container-fluid py-5 bg-secondary" id="newsletter">
+    <div class="container py-5">
+        <div class="row g-0 justify-content-center">
+            <div class="col-lg-7 text-center">
+                {% include "partials/_section_title.html" with subtitle=page.newsletter_subtitle title=page.newsletter_title %}
+
+                {% if page.newsletter_text %}
+                <p class="mb-4 wow fadeInUp" data-wow-delay="0.2s">{{ page.newsletter_text }}</p>
+                {% endif %}
+
+                <form method="post" action="{% url 'home:subscribe' %}" class="newsletter-form position-relative wow fadeInUp" data-wow-delay="0.3s">
+                    {% csrf_token %}
+                    <label for="{{ subscribe_form.email.id_for_label }}" class="visually-hidden">Email address</label>
+                    {{ subscribe_form.email }}
+                    <button type="submit" class="btn btn-primary py-3 px-4 position-absolute top-0 end-0 me-2">{{ page.newsletter_button_text }}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}

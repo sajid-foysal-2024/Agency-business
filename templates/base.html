@@ -1,0 +1,64 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ site.brand_name }}{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}{{ site.meta_description|default:site.tagline }}{% endblock %}">
+    {% if site.meta_keywords %}<meta name="keywords" content="{{ site.meta_keywords }}">{% endif %}
+
+    <!-- Open Graph (link previews on Facebook, WhatsApp, etc.) -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="{{ site.brand_name }}">
+    <meta property="og:title" content="{% block og_title %}{{ site.brand_name }}{% endblock %}">
+    <meta property="og:description" content="{{ site.meta_description|default:site.tagline }}">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+
+    {% if site.favicon %}<link rel="icon" href="{{ site.favicon.url }}">{% endif %}
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;700&family=Work+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Libraries -->
+    <link href="{% static 'lib/animate/animate.min.css' %}" rel="stylesheet">
+    <link href="{% static 'lib/owlcarousel/assets/owl.carousel.min.css' %}" rel="stylesheet">
+
+    <!-- Bootstrap (customized theme) + site styles -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+    {% include "partials/_spinner.html" %}
+    {% include "partials/_navbar.html" %}
+    {% include "partials/_messages.html" %}
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    {% include "partials/_footer.html" %}
+
+    <a href="#" class="btn btn-outline-primary border-2 btn-lg-square back-to-top" aria-label="Back to top">
+        <i class="fa-solid fa-arrow-up"></i>
+    </a>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'lib/wow/wow.min.js' %}"></script>
+    <script src="{% static 'lib/easing/easing.min.js' %}"></script>
+    <script src="{% static 'lib/owlcarousel/owl.carousel.min.js' %}"></script>
+
+    <script src="{% static 'js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>
