@@ -1,0 +1,23 @@
+{% if process_steps %}
+<section class="container-fluid py-5 bg-secondary" id="process">
+    <div class="container py-5">
+        <div class="text-center">
+            {% include "partials/_section_title.html" with subtitle=page.process_subtitle title=page.process_title %}
+        </div>
+        <div class="row g-4 process-row">
+            {% for step in process_steps %}
+            <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="{% cycle '0.1s' '0.3s' '0.5s' '0.7s' %}">
+                <div class="process-item text-center">
+                    <div class="process-icon">
+                        <i class="{{ step.icon|default:'fa-solid fa-circle' }}"></i>
+                        <span class="process-number">{{ forloop.counter|stringformat:"02d" }}</span>
+                    </div>
+                    <h4 class="text-uppercase mb-3">{{ step.title }}</h4>
+                    {% if step.text %}<p class="mb-0">{{ step.text }}</p>{% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}

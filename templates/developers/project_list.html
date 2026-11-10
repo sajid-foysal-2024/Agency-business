@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Works of {{ developer.name }} | {{ site.brand_name }}{% endblock %}
+{% block og_title %}Works of {{ developer.name }} | {{ site.brand_name }}{% endblock %}
+{% block extra_css %}<link href="{% static 'css/developers.css' %}" rel="stylesheet">{% endblock %}
+
+{% block content %}
+    {% include "partials/_page_header.html" with title="My Works" subtitle=developer.name %}
+
+    <section class="container-fluid pb-5">
+        <div class="container pb-5">
+            {% if categories|length > 1 %}
+            <div class="work-filters text-center mb-5 wow fadeInUp" data-wow-delay="0.1s">
+                <a href="{% url 'developers:works' developer.slug %}" class="btn {% if not current_category %}btn-primary{% else %}btn-outline-primary border-2{% endif %} m-1 px-4">All</a>
+                {% for category in categories %}
+                <a href="?category={{ category|urlencode }}" class="btn {% if current_category|lower == category|lower %}btn-primary{% else %}btn-outline-primary border-2{% endif %} m-1 px-4">{{ category }}</a>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="row justify-content-center">
+                <div class="col-xl-10">
+                    {% if projects %}
+                    {% include "developers/partials/_works_grid.html" %}
+                    {% else %}
+                    <p class="fs-5 text-center">No works found.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% include "partials/_pagination.html" %}
+
+            <div class="text-center mt-5">
+                <a href="{{ developer.get_absolute_url }}" class="btn btn-outline-primary border-2 py-3 px-5">
+                    <i class="fa-solid fa-arrow-left me-2"></i>Back to {{ developer.first_name }}'s profile
+                </a>
+            </div>
+        </div>
+    </section>
+{% endblock %}

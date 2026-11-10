@@ -1,0 +1,18 @@
+{% if client_logos %}
+<section class="container-fluid py-5" id="clients">
+    <div class="container py-5">
+        <div class="text-center">
+            {% include "partials/_section_title.html" with subtitle=page.clients_subtitle title=page.clients_title %}
+        </div>
+        <div class="row g-4 justify-content-center align-items-center">
+            {% for client in client_logos %}
+            <div class="col-lg-2 col-md-3 col-4 wow fadeIn" data-wow-delay="0.1s">
+                {% if client.website %}<a href="{{ client.website }}" target="_blank" rel="noopener" class="client-logo">{% else %}<div class="client-logo">{% endif %}
+                    <img class="img-fluid" src="{{ client.logo.url }}" alt="{{ client.name }}" loading="lazy">
+                {% if client.website %}</a>{% else %}</div>{% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}

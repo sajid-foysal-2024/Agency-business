@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Our Developers | {{ site.brand_name }}{% endblock %}
+{% block og_title %}Our Developers | {{ site.brand_name }}{% endblock %}
+{% block meta_description %}Meet the developers working at {{ site.brand_name }}.{% endblock %}
+{% block extra_css %}<link href="{% static 'css/developers.css' %}" rel="stylesheet">{% endblock %}
+
+{% block content %}
+    {% include "partials/_page_header.html" with title="Our Developers" subtitle="The people who build your projects" %}
+
+    <section class="container-fluid pb-5" id="developers">
+        <div class="container pb-5">
+            <div class="text-center">
+                {% include "partials/_section_title.html" with subtitle="Employees" title="Meet The Team" %}
+                {% if paginator.count %}<p class="mb-5 wow fadeInUp" data-wow-delay="0.2s">{{ paginator.count }} developer{{ paginator.count|pluralize }} working with us</p>{% endif %}
+            </div>
+
+            <div class="row g-4 justify-content-center">
+                {% for developer in developers %}
+                <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="{% cycle '0.1s' '0.3s' '0.5s' '0.7s' %}">
+                    {% include "developers/partials/_developer_card.html" %}
+                    {% if developer.skills.all %}
+                    <div class="developer-skill-tags mt-3 text-center">
+                        {% for skill in developer.skills.all|slice:":3" %}<span>{{ skill.name }}</span>{% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                {% empty %}
+                <div class="col-12 text-center">
+                    <p class="fs-5">No developers have been added yet.</p>
+                </div>
+                {% endfor %}
+            </div>
+
+            {% include "partials/_pagination.html" %}
+        </div>
+    </section>
+{% endblock %}

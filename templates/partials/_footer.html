@@ -1,27 +1,67 @@
-<footer class="container-fluid bg-dark text-light footer py-5 wow fadeIn" data-wow-delay="0.1s">
-    <div class="container text-center py-5">
-        <a href="{% url 'home:index' %}" class="d-inline-block mb-3">
-            <h2 class="display-4 mb-0 text-white">{% include "partials/_brand.html" %}</h2>
-        </a>
-        {% if site.tagline %}<p class="mb-4">{{ site.tagline }}</p>{% endif %}
+{% url 'home:index' as home_url %}
+<footer class="container-fluid bg-dark text-light footer pt-5 wow fadeIn" data-wow-delay="0.1s">
+    <div class="container py-5">
+        <div class="row g-5">
+            <div class="col-lg-4 col-md-6">
+                <a href="{{ home_url }}" class="d-inline-block mb-3 text-decoration-none">
+                    <h2 class="mb-0 text-white">{% include "partials/_brand.html" %}</h2>
+                </a>
+                {% if site.about_short %}
+                <p class="mb-4">{{ site.about_short }}</p>
+                {% elif site.tagline %}
+                <p class="mb-4">{{ site.tagline }}</p>
+                {% endif %}
+                {% if site.social_links %}
+                <div class="d-flex flex-wrap">
+                    {% include "partials/_social_links.html" with links=site.social_links btn_class="btn-square btn-outline-primary border-2 me-2 mb-2" %}
+                </div>
+                {% endif %}
+            </div>
 
-        {% if site.email or site.phone or site.address %}
-        <ul class="list-inline footer-contact mb-4">
-            {% if site.address %}<li class="list-inline-item"><i class="fa-solid fa-location-dot text-primary me-2"></i>{{ site.address }}</li>{% endif %}
-            {% if site.phone %}<li class="list-inline-item"><i class="fa-solid fa-phone text-primary me-2"></i><a href="tel:{{ site.phone }}">{{ site.phone }}</a></li>{% endif %}
-            {% if site.email %}<li class="list-inline-item"><i class="fa-solid fa-envelope text-primary me-2"></i><a href="mailto:{{ site.email }}">{{ site.email }}</a></li>{% endif %}
-        </ul>
-        {% endif %}
+            <div class="col-lg-2 col-md-6">
+                <h5 class="text-uppercase text-white footer-heading mb-4">Quick Links</h5>
+                <ul class="list-unstyled footer-links mb-0">
+                    <li><a href="{{ home_url }}#about">About Us</a></li>
+                    <li><a href="{{ home_url }}#services">Services</a></li>
+                    <li><a href="{% url 'developers:list' %}">Developers</a></li>
+                    <li><a href="{{ home_url }}#testimonial">Testimonials</a></li>
+                    <li><a href="{{ home_url }}#newsletter">Contact</a></li>
+                </ul>
+            </div>
 
-        {% if site.social_links %}
-        <div class="d-flex justify-content-center flex-wrap mb-4">
-            {% include "partials/_social_links.html" with links=site.social_links %}
+            {% if footer_services %}
+            <div class="col-lg-3 col-md-6">
+                <h5 class="text-uppercase text-white footer-heading mb-4">Services</h5>
+                <ul class="list-unstyled footer-links mb-0">
+                    {% for service in footer_services %}
+                    <li><a href="{{ home_url }}#services">{{ service.title }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            {% if site.email or site.phone or site.address %}
+            <div class="col-lg-3 col-md-6">
+                <h5 class="text-uppercase text-white footer-heading mb-4">Get In Touch</h5>
+                <ul class="list-unstyled footer-contact mb-0">
+                    {% if site.address %}<li><i class="fa-solid fa-location-dot text-primary me-3"></i>{{ site.address }}</li>{% endif %}
+                    {% if site.phone %}<li><i class="fa-solid fa-phone text-primary me-3"></i><a href="tel:{{ site.phone }}">{{ site.phone }}</a></li>{% endif %}
+                    {% if site.email %}<li><i class="fa-solid fa-envelope text-primary me-3"></i><a href="mailto:{{ site.email }}">{{ site.email }}</a></li>{% endif %}
+                </ul>
+            </div>
+            {% endif %}
         </div>
-        {% endif %}
+    </div>
 
-        <p>&copy; {% now "Y" %} <a class="border-bottom" href="{% url 'home:index' %}">{{ site.copyright_name|default:site.brand_name }}</a>, All Rights Reserved.</p>
-
-        <!--/*** The author's attribution link must remain intact in the template. ***/-->
-        <p class="mb-0 small">Designed By <a class="border-bottom" href="https://htmlcodex.com" target="_blank" rel="noopener">HTML Codex</a>. Distributed by <a href="https://themewagon.com" target="_blank" rel="noopener">ThemeWagon</a>.</p>
+    <div class="container footer-bottom py-4">
+        <div class="row g-2 align-items-center">
+            <div class="col-md-6 text-center text-md-start">
+                &copy; {% now "Y" %} <a class="border-bottom" href="{{ home_url }}">{{ site.copyright_name|default:site.brand_name }}</a>, All Rights Reserved.
+            </div>
+            <div class="col-md-6 text-center text-md-end small">
+                <!--/*** The author's attribution link must remain intact in the template. ***/-->
+                Designed By <a class="border-bottom" href="https://htmlcodex.com" target="_blank" rel="noopener">HTML Codex</a>. Distributed by <a href="https://themewagon.com" target="_blank" rel="noopener">ThemeWagon</a>.
+            </div>
+        </div>
     </div>
 </footer>

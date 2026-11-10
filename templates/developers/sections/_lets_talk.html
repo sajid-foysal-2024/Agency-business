@@ -1,0 +1,37 @@
+{# "Do you have any project? Let's Talk" + social link boxes #}
+{% url 'home:index' as home_url %}
+<section class="container-fluid bg-secondary py-5" id="lets-talk">
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-lg-8 wow fadeInUp" data-wow-delay="0.1s">
+                <h2 class="lets-talk-title">
+                    {{ developer.cta_title|default:"Do you have any project?" }}
+                    {% if developer.email %}
+                    <a href="mailto:{{ developer.email }}">Let's Talk</a>
+                    {% else %}
+                    <a href="{{ home_url }}#newsletter">Let's Talk</a>
+                    {% endif %}
+                </h2>
+                {% if developer.cta_text %}<p class="mb-4">{{ developer.cta_text }}</p>{% endif %}
+                {% if developer.email or developer.phone %}
+                <ul class="list-inline mb-0">
+                    {% if developer.email %}<li class="list-inline-item me-4 mb-2"><i class="fa-solid fa-envelope text-primary me-2"></i><a href="mailto:{{ developer.email }}">{{ developer.email }}</a></li>{% endif %}
+                    {% if developer.phone %}<li class="list-inline-item mb-2"><i class="fa-solid fa-phone text-primary me-2"></i><a href="tel:{{ developer.phone }}">{{ developer.phone }}</a></li>{% endif %}
+                </ul>
+                {% endif %}
+            </div>
+        </div>
+        {% if developer.social_links %}
+        <div class="row g-3 mt-4">
+            {% for link in developer.social_links %}
+            <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="{% cycle '0.1s' '0.2s' '0.3s' '0.4s' %}">
+                <a class="social-box d-flex justify-content-between align-items-center" href="{{ link.url }}" target="_blank" rel="noopener">
+                    <span>{{ link.name }}</span>
+                    <i class="{{ link.icon }}"></i>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</section>

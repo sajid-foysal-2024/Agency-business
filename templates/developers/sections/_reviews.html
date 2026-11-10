@@ -1,0 +1,32 @@
+{% if developer.active_reviews %}
+<section class="container-fluid py-5" id="reviews">
+    <div class="container py-5">
+        {% include "partials/_section_title.html" with subtitle="Testimonial" title="What Clients Say" align="left" %}
+        <div class="owl-carousel review-carousel wow fadeInUp" data-wow-delay="0.2s">
+            {% for review in developer.active_reviews %}
+            <div class="row">
+                <div class="col-xl-9 col-md-10">
+                    <div class="single-review">
+                        <i class="fa-solid fa-quote-left fa-2x text-primary mb-3"></i>
+                        <p class="fs-5">{{ review.message }}</p>
+                        <div class="review-author d-flex align-items-center">
+                            <div class="thumb me-3">
+                                {% if review.photo %}
+                                <img src="{{ review.photo.url }}" alt="{{ review.client_name }}">
+                                {% else %}
+                                <span>{{ review.client_name|first|upper }}</span>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <h5 class="text-uppercase mb-0">{{ review.client_name }}</h5>
+                                {% if review.client_role %}<span class="text-primary">{{ review.client_role }}</span>{% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}

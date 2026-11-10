@@ -12,9 +12,12 @@
             <a href="{{ home_url }}" class="nav-item nav-link{% if request.path == home_url %} active{% endif %}">Home</a>
             <a href="{{ home_url }}#about" class="nav-item nav-link">About</a>
             <a href="{{ home_url }}#services" class="nav-item nav-link">Services</a>
-            <a href="{{ home_url }}#team" class="nav-item nav-link">Team</a>
-            <a href="{{ home_url }}#testimonial" class="nav-item nav-link">Testimonial</a>
+            <a href="{% url 'developers:list' %}" class="nav-item nav-link{% if request.resolver_match.app_name == 'developers' %} active{% endif %}">Developers</a>
+            <a href="{{ home_url }}#testimonial" class="nav-item nav-link">Shop</a>
             <a href="{{ home_url }}#newsletter" class="nav-item nav-link">Contact</a>
         </div>
+        {% if site.header_button_text %}
+        <a href="{{ site.header_button_link|default:'#' }}" class="btn btn-primary py-2 px-4 ms-4 ms-lg-0 mb-3 mb-lg-0 header-btn">{{ site.header_button_text }}</a>
+        {% endif %}
     </div>
 </nav>

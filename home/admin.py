@@ -1,55 +1,13 @@
 from django.contrib import admin
-from django.shortcuts import redirect
-from django.urls import reverse
-from django.utils.html import format_html
 
-from .models import (About, AboutPoint, HeroSlide, HomePage, Service,
-                     SiteSetting, Subscriber, TeamMember, Testimonial)
+from core.admin_utils import OrderedAdmin, SingletonAdmin, image_preview
+
+from .models import (About, AboutPoint, ClientLogo, Feature, HeroSlide, HomePage,
+                     ProcessStep, Service, SiteSetting, Stat, Subscriber, Testimonial)
 
 admin.site.site_header = "Agency Admin"
 admin.site.site_title = "Agency Admin"
 admin.site.index_title = "Website content"
-
-
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
-
-def image_preview(field_name, size=60):
-    """Build a small thumbnail column for list pages."""
-
-    @admin.display(description="Preview")
-    def _preview(obj):
-        image = getattr(obj, field_name)
-        if not image:
-            return "-"
-        return format_html(
-            '<img src="{}" style="height:{}px;width:{}px;object-fit:cover;border-radius:6px;">',
-            image.url, size, size,
-        )
-
-    return _preview
-
-
-class SingletonAdmin(admin.ModelAdmin):
-    """Admin for one-row models: the list page opens the edit form directly."""
-
-    def has_add_permission(self, request):
-        return not self.model.objects.exists()
-
-    def has_delete_permission(self, request, obj=None):
-        return False
-
-    def changelist_view(self, request, extra_context=None):
-        obj = self.model.load()
-        opts = self.model._meta
-        return redirect(reverse(f"admin:{opts.app_label}_{opts.model_name}_change", args=[obj.pk]))
-
-
-class OrderedAdmin(admin.ModelAdmin):
-    list_editable = ("order", "is_active")
-    list_filter = ("is_active",)
-    readonly_fields = ("created_at", "updated_at")
 
 
 # ---------------------------------------------------------------------------
@@ -59,14 +17,15 @@ class OrderedAdmin(admin.ModelAdmin):
 @admin.register(SiteSetting)
 class SiteSettingAdmin(SingletonAdmin):
     fieldsets = (
-        ("Branding", {"fields": ("brand_name", "tagline", "brand_icon", "logo", "favicon")}),
+        ("Branding", {"fields": ("brand_name", "tagline", "brand_icon", "logo", "favicon", "founded_year")}),
+        ("Header button", {"fields": ("header_button_text", "header_button_link")}),
         ("SEO", {"fields": ("meta_description", "meta_keywords")}),
         ("Contact", {"fields": ("email", "phone", "address")}),
         ("Social links", {
             "fields": ("facebook_url", "x_url", "instagram_url", "linkedin_url", "youtube_url"),
             "description": "Leave a link blank to hide its icon.",
         }),
-        ("Footer", {"fields": ("copyright_name",)}),
+        ("Footer", {"fields": ("about_short", "copyright_name")}),
     )
 
 
@@ -74,9 +33,26 @@ class SiteSettingAdmin(SingletonAdmin):
 class HomePageAdmin(SingletonAdmin):
     fieldsets = (
         ("SEO", {"fields": ("meta_title",)}),
+        ("Counters", {
+            "fields": ("show_stats",),
+            "description": "Add the counters themselves under Home > Stats.",
+        }),
         ("Services section", {"fields": ("services_subtitle", "services_title")}),
-        ("Team section", {"fields": ("team_subtitle", "team_title")}),
+        ("Why choose us section", {"fields": ("features_subtitle", "features_title", "features_text")}),
+        ("Recent works section", {
+            "fields": ("works_subtitle", "works_title", "works_limit"),
+            "description": "Shows developer projects marked \"Is featured\".",
+        }),
+        ("Process section", {"fields": ("process_subtitle", "process_title")}),
+        ("Team section", {
+            "fields": ("team_subtitle", "team_title", "team_button_text"),
+            "description": "Developers marked \"Show on home page\" appear in this section.",
+        }),
         ("Testimonials section", {"fields": ("testimonials_subtitle", "testimonials_title")}),
+        ("Client logos section", {"fields": ("clients_subtitle", "clients_title")}),
+        ("Call-to-action banner", {"fields": (
+            "show_cta", "cta_title", "cta_text", "cta_button_text", "cta_button_link",
+        )}),
         ("Newsletter section", {"fields": (
             "show_newsletter", "newsletter_subtitle", "newsletter_title",
             "newsletter_text", "newsletter_button_text",
@@ -119,15 +95,27 @@ class ServiceAdmin(OrderedAdmin):
     search_fields = ("title", "description")
 
 
-@admin.register(TeamMember)
-class TeamMemberAdmin(OrderedAdmin):
-    list_display = ("name", image_preview("photo"), "role", "order", "is_active")
-    search_fields = ("name", "role")
-    fieldsets = (
-        (None, {"fields": ("name", "role", "photo", "bio", "order", "is_active")}),
-        ("Social links", {"fields": ("facebook_url", "x_url", "instagram_url", "linkedin_url")}),
-        ("Info", {"fields": ("created_at", "updated_at"), "classes": ("collapse",)}),
-    )
+@admin.register(Stat)
+class StatAdmin(OrderedAdmin):
+    list_display = ("label", "source", "value", "suffix", "order", "is_active")
+    fields = ("label", "icon", "source", "value", "suffix", "order", "is_active")
+
+
+@admin.register(Feature)
+class FeatureAdmin(OrderedAdmin):
+    list_display = ("title", "icon", "order", "is_active")
+    search_fields = ("title", "text")
+
+
+@admin.register(ProcessStep)
+class ProcessStepAdmin(OrderedAdmin):
+    list_display = ("title", "icon", "order", "is_active")
+
+
+@admin.register(ClientLogo)
+class ClientLogoAdmin(OrderedAdmin):
+    list_display = ("name", image_preview("logo"), "website", "order", "is_active")
+    search_fields = ("name",)
 
 
 @admin.register(Testimonial)

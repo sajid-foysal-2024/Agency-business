@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ project.title }} | {{ developer.name }} | {{ site.brand_name }}{% endblock %}
+{% block og_title %}{{ project.title }} | {{ site.brand_name }}{% endblock %}
+{% block meta_description %}{{ project.summary|default:project.description|truncatewords:30 }}{% endblock %}
+{% block extra_css %}<link href="{% static 'css/developers.css' %}" rel="stylesheet">{% endblock %}
+
+{% block content %}
+    {% include "partials/_page_header.html" with title=project.title subtitle=project.summary %}
+
+    <section class="container-fluid pb-5">
+        <div class="container pb-5">
+            <div class="row g-5">
+                <div class="col-lg-8 wow fadeInUp" data-wow-delay="0.1s">
+                    <img class="img-fluid w-100 mb-5 project-cover" src="{{ project.image.url }}" alt="{{ project.title }}">
+                    {% if project.description %}
+                    <div class="project-description">{{ project.description|linebreaks }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="col-lg-4 wow fadeInUp" data-wow-delay="0.3s">
+                    <div class="project-info bg-secondary p-4">
+                        <h4 class="text-uppercase mb-4">Project Info</h4>
+                        <ul class="list-unstyled mb-4">
+                            {% if project.category %}<li><span>Category</span>{{ project.category }}</li>{% endif %}
+                            {% if project.client %}<li><span>Client</span>{{ project.client }}</li>{% endif %}
+                            {% if project.completed_on %}<li><span>Completed</span>{{ project.completed_on|date:"F Y" }}</li>{% endif %}
+                            <li><span>Developer</span><a href="{{ developer.get_absolute_url }}">{{ developer.name }}</a></li>
+                        </ul>
+                        {% if project.technology_list %}
+                        <h6 class="text-uppercase mb-3">Technologies</h6>
+                        <div class="developer-skill-tags mb-4">
+                            {% for tech in project.technology_list %}<span>{{ tech }}</span>{% endfor %}
+                        </div>
+                        {% endif %}
+                        {% if project.live_url %}
+                        <a href="{{ project.live_url }}" class="btn btn-primary w-100 py-3 mb-2" target="_blank" rel="noopener"><i class="fa-solid fa-arrow-up-right-from-square me-2"></i>Live Preview</a>
+                        {% endif %}
+                        {% if project.source_url %}
+                        <a href="{{ project.source_url }}" class="btn btn-outline-primary border-2 w-100 py-3" target="_blank" rel="noopener"><i class="fa-brands fa-github me-2"></i>Source Code</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-nav d-flex justify-content-between flex-wrap gap-3 mt-5 pt-4">
+                {% if previous_project %}
+                <a href="{{ previous_project.get_absolute_url }}" class="btn btn-outline-primary border-2 px-4"><i class="fa-solid fa-arrow-left me-2"></i>{{ previous_project.title|truncatechars:30 }}</a>
+                {% else %}<span></span>{% endif %}
+                <a href="{% url 'developers:works' developer.slug %}" class="btn btn-primary px-4">All Works</a>
+                {% if next_project %}
+                <a href="{{ next_project.get_absolute_url }}" class="btn btn-outline-primary border-2 px-4">{{ next_project.title|truncatechars:30 }}<i class="fa-solid fa-arrow-right ms-2"></i></a>
+                {% else %}<span></span>{% endif %}
+            </div>
+        </div>
+    </section>
+{% endblock %}

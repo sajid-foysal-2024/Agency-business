@@ -21,8 +21,15 @@
                     </div>
                 </div>
                 {% if slide.text %}<p class="fs-5 mb-5 animated slideInDown">{{ slide.text|linebreaksbr }}</p>{% endif %}
-                {% if slide.button_text %}
-                <a href="{{ slide.button_link|default:'#about' }}" class="btn btn-outline-primary border-2 py-3 px-5 animated slideInDown">{{ slide.button_text }}</a>
+                {% if slide.button_text or slide.second_button_text %}
+                <div class="d-flex flex-wrap justify-content-center gap-3 animated slideInDown">
+                    {% if slide.button_text %}
+                    <a href="{{ slide.button_link|default:'#about' }}" class="btn btn-primary py-3 px-5">{{ slide.button_text }}</a>
+                    {% endif %}
+                    {% if slide.second_button_text %}
+                    <a href="{{ slide.second_button_link|default:'#services' }}" class="btn btn-outline-primary border-2 py-3 px-5">{{ slide.second_button_text }}</a>
+                    {% endif %}
+                </div>
                 {% endif %}
             </div>
         </div>
@@ -38,7 +45,10 @@
                     </div>
                 </div>
                 {% if site.tagline %}<p class="fs-5 mb-5 animated slideInDown">{{ site.tagline }}</p>{% endif %}
-                <a href="#services" class="btn btn-outline-primary border-2 py-3 px-5 animated slideInDown">Explore More</a>
+                <div class="d-flex flex-wrap justify-content-center gap-3 animated slideInDown">
+                    <a href="#about" class="btn btn-primary py-3 px-5">Explore More</a>
+                    <a href="#services" class="btn btn-outline-primary border-2 py-3 px-5">Our Services</a>
+                </div>
             </div>
         </div>
         {% endfor %}

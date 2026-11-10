@@ -1,0 +1,30 @@
+{# One developer card (home Team section + developers list). Param: developer #}
+<div class="team-item h-100">
+    <div class="team-body">
+        {% if developer.photo %}
+        <img class="img-fluid" src="{{ developer.photo.url }}" alt="{{ developer.name }}" loading="lazy">
+        {% else %}
+        <div class="developer-placeholder"><span>{{ developer.initials }}</span></div>
+        {% endif %}
+        <div class="team-overlay">
+            {% if developer.headline %}
+            <p class="mb-3">{{ developer.headline|truncatewords:18 }}</p>
+            {% elif developer.bio %}
+            <p class="mb-3">{{ developer.bio|truncatewords:18 }}</p>
+            {% endif %}
+            {% if developer.social_links %}
+            <div class="d-flex justify-content-center flex-wrap mb-3">
+                {% include "partials/_social_links.html" with links=developer.social_links|slice:":4" btn_class="btn-square btn-outline-primary border-2 m-1" %}
+            </div>
+            {% endif %}
+            <a href="{{ developer.get_absolute_url }}" class="btn btn-primary px-4">View Portfolio</a>
+        </div>
+        {% if developer.is_available %}
+        <span class="developer-badge"><i class="fa-solid fa-circle me-1"></i>Available</span>
+        {% endif %}
+    </div>
+    <a class="team-name flex-column" href="{{ developer.get_absolute_url }}">
+        <h5 class="text-uppercase mb-0">{{ developer.name }}</h5>
+        {% if developer.designation %}<small class="text-primary">{{ developer.designation }}</small>{% endif %}
+    </a>
+</div>

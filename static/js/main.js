@@ -66,4 +66,69 @@
         });
     }
 
+
+    // Developer portfolio: client reviews carousel
+    var $reviews = $('.review-carousel');
+    if ($reviews.length) {
+        var manyReviews = $reviews.children().length > 1;
+        $reviews.owlCarousel({
+            autoplay: manyReviews,
+            smartSpeed: 1000,
+            loop: manyReviews,
+            nav: false,
+            dots: manyReviews,
+            items: 1,
+        });
+    }
+
+
+    // Home stats: numbers count up when they scroll into view
+    var counters = document.querySelectorAll('.counter');
+    function runCounter(el) {
+        var target = parseInt(el.getAttribute('data-target'), 10) || 0;
+        var start = null;
+        var duration = 1500;
+        function step(time) {
+            if (!start) { start = time; }
+            var progress = Math.min((time - start) / duration, 1);
+            el.textContent = Math.floor(progress * target);
+            if (progress < 1) {
+                requestAnimationFrame(step);
+            } else {
+                el.textContent = target;
+            }
+        }
+        requestAnimationFrame(step);
+    }
+    if (counters.length && 'IntersectionObserver' in window) {
+        var counterObserver = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                    runCounter(entry.target);
+                    counterObserver.unobserve(entry.target);
+                }
+            });
+        }, {threshold: 0.5});
+        counters.forEach(function (el) { counterObserver.observe(el); });
+    }
+
+
+    // Developer portfolio: skill bars fill up when they scroll into view
+    var skillBlocks = document.querySelectorAll('.progress-skills');
+    if (skillBlocks.length) {
+        if ('IntersectionObserver' in window) {
+            var observer = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {threshold: 0.3});
+            skillBlocks.forEach(function (el) { observer.observe(el); });
+        } else {
+            skillBlocks.forEach(function (el) { el.classList.add('is-visible'); });
+        }
+    }
+
 })(jQuery);

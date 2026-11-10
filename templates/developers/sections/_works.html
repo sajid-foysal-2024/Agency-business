@@ -1,0 +1,18 @@
+{# Two-column gallery of the latest works #}
+{% if works %}
+<section class="container-fluid bg-secondary py-5" id="works">
+    <div class="container py-5">
+        {% include "partials/_section_title.html" with subtitle="Portfolio" title="My Works" align="left" %}
+        <div class="row justify-content-center">
+            <div class="col-xl-10">
+                {% include "developers/partials/_works_grid.html" with projects=works %}
+                {% if has_more_works %}
+                <div class="text-center mt-5">
+                    <a class="btn btn-outline-primary border-2 py-3 px-5" href="{% url 'developers:works' developer.slug %}">More Works</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}

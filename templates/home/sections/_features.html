@@ -1,0 +1,23 @@
+{% if features %}
+<section class="container-fluid py-5 bg-secondary" id="why-us">
+    <div class="container py-5">
+        <div class="text-center">
+            {% include "partials/_section_title.html" with subtitle=page.features_subtitle title=page.features_title %}
+            {% if page.features_text %}
+            <p class="mx-auto mb-5 section-intro wow fadeInUp" data-wow-delay="0.2s">{{ page.features_text }}</p>
+            {% endif %}
+        </div>
+        <div class="row g-4">
+            {% for feature in features %}
+            <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="{% cycle '0.1s' '0.3s' '0.5s' '0.7s' %}">
+                <div class="feature-item h-100 text-center">
+                    <div class="feature-icon"><i class="{{ feature.icon|default:'fa-solid fa-check' }}"></i></div>
+                    <h4 class="text-uppercase mb-3">{{ feature.title }}</h4>
+                    {% if feature.text %}<p class="mb-0">{{ feature.text }}</p>{% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}

@@ -1,0 +1,27 @@
+{% if featured_projects %}
+<section class="container-fluid py-5" id="works">
+    <div class="container py-5">
+        <div class="text-center">
+            {% include "partials/_section_title.html" with subtitle=page.works_subtitle title=page.works_title %}
+        </div>
+        <div class="row g-4">
+            {% for project in featured_projects %}
+            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="{% cycle '0.1s' '0.3s' '0.5s' %}">
+                <div class="home-work-item">
+                    <img class="img-fluid w-100" src="{{ project.image.url }}" alt="{{ project.title }}" loading="lazy">
+                    <div class="home-work-overlay">
+                        {% if project.category %}<span class="text-primary text-uppercase small">{{ project.category }}</span>{% endif %}
+                        <h4 class="text-uppercase my-2">{{ project.title }}</h4>
+                        <p class="small mb-3">by {{ project.developer.name }}</p>
+                        <a href="{{ project.get_absolute_url }}" class="btn btn-outline-primary border-2 px-4">View Project</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-5 wow fadeInUp" data-wow-delay="0.2s">
+            <a href="{% url 'developers:list' %}" class="btn btn-outline-primary border-2 py-3 px-5">See All Developers</a>
+        </div>
+    </div>
+</section>
+{% endif %}

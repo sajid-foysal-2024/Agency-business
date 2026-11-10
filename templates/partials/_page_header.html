@@ -1,0 +1,19 @@
+{# Header for inner pages. Params: title, subtitle (optional). Pass breadcrumbs with {% block breadcrumbs %} in the page. #}
+<section class="container-fluid page-header py-5 mb-5">
+    <div class="container py-5 text-center">
+        <h1 class="display-3 text-white text-uppercase animated slideInDown">{{ title }}</h1>
+        {% if subtitle %}<p class="fs-5 text-white-50 mb-3 animated slideInDown">{{ subtitle }}</p>{% endif %}
+        <nav aria-label="breadcrumb animated slideInDown">
+            <ol class="breadcrumb justify-content-center text-uppercase mb-0">
+                <li class="breadcrumb-item"><a class="text-white" href="{% url 'home:index' %}">Home</a></li>
+                {% for crumb in breadcrumbs %}
+                {% if crumb.url %}
+                <li class="breadcrumb-item"><a class="text-white" href="{{ crumb.url }}">{{ crumb.label }}</a></li>
+                {% else %}
+                <li class="breadcrumb-item text-primary active" aria-current="page">{{ crumb.label }}</li>
+                {% endif %}
+                {% endfor %}
+            </ol>
+        </nav>
+    </div>
+</section>

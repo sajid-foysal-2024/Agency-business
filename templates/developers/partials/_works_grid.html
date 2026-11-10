@@ -1,0 +1,13 @@
+{# Two-column staggered gallery. Param: projects #}
+<div class="row g-4">
+    <div class="col-md-6">
+        {% for project in projects %}{% if not forloop.counter|divisibleby:2 %}
+        {% include "developers/partials/_work_item.html" %}
+        {% endif %}{% endfor %}
+    </div>
+    <div class="col-md-6 works-col-offset">
+        {% for project in projects %}{% if forloop.counter|divisibleby:2 %}
+        {% include "developers/partials/_work_item.html" %}
+        {% endif %}{% endfor %}
+    </div>
+</div>

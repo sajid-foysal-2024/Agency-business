@@ -1,0 +1,45 @@
+{# Intro headline, bio + CV button on the left, skill bars on the right #}
+{% if developer.headline or developer.bio or developer.skills.all %}
+<section class="container-fluid bg-secondary py-5" id="about-me">
+    <div class="container py-5">
+        {% if developer.headline %}
+        <div class="row">
+            <div class="col-xl-10">
+                <h2 class="portfolio-headline mb-5 wow fadeInUp" data-wow-delay="0.1s">{{ developer.headline }}</h2>
+            </div>
+        </div>
+        {% endif %}
+        <div class="row g-5">
+            <div class="{% if developer.skills.all %}col-lg-6 col-md-6{% else %}col-12{% endif %} wow fadeInUp" data-wow-delay="0.2s">
+                {% for paragraph in developer.bio_paragraphs %}
+                <p>{{ paragraph|linebreaksbr }}</p>
+                {% endfor %}
+                {% if developer.cv %}
+                <a href="{{ developer.cv.url }}" class="btn btn-outline-primary border-2 py-3 px-5 mt-3" download>
+                    <i class="fa-solid fa-download me-2"></i>Download CV
+                </a>
+                {% endif %}
+            </div>
+            {% if developer.skills.all %}
+            <div class="col-lg-5 offset-lg-1 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
+                <div class="progress-skills">
+                    {% for skill in developer.skills.all %}
+                    <div class="single-progress">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>{{ skill.name }}</span>
+                            <span>{{ skill.percentage }}%</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width: {{ skill.percentage }}%"
+                                aria-valuenow="{{ skill.percentage }}" aria-valuemin="0" aria-valuemax="100"
+                                aria-label="{{ skill.name }}"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endif %}

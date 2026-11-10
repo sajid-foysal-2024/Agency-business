@@ -1,0 +1,18 @@
+{# Params: page_obj, extra_query (optional, e.g. "category=Web&") #}
+{% if page_obj.has_other_pages %}
+<nav class="mt-5" aria-label="Pages">
+    <ul class="pagination justify-content-center site-pagination">
+        {% if page_obj.has_previous %}
+        <li class="page-item"><a class="page-link" href="?{{ extra_query|default:'' }}page={{ page_obj.previous_page_number }}" aria-label="Previous"><i class="fa-solid fa-angle-left"></i></a></li>
+        {% endif %}
+        {% for num in page_obj.paginator.page_range %}
+        <li class="page-item{% if num == page_obj.number %} active{% endif %}">
+            <a class="page-link" href="?{{ extra_query|default:'' }}page={{ num }}">{{ num }}</a>
+        </li>
+        {% endfor %}
+        {% if page_obj.has_next %}
+        <li class="page-item"><a class="page-link" href="?{{ extra_query|default:'' }}page={{ page_obj.next_page_number }}" aria-label="Next"><i class="fa-solid fa-angle-right"></i></a></li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}

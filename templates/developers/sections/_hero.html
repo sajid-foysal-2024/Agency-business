@@ -1,0 +1,43 @@
+{# "Hi there, I am ..." hero with the developer's photo on the right #}
+<section class="portfolio-hero d-flex align-items-center">
+    <div class="container">
+        <div class="row align-items-center position-relative">
+            <div class="col-lg-8">
+                <div class="portfolio-hero-text animated slideInDown">
+                    <h5 class="text-uppercase text-primary mb-3">{% if developer.location %}<i class="fa-solid fa-location-dot me-2"></i>{{ developer.location }}{% else %}Portfolio{% endif %}</h5>
+                    <h1>Hi there, I am {{ developer.first_name }}
+                        {% if developer.designation %}<span>{{ developer.designation }}</span>{% endif %}
+                    </h1>
+                    <div class="d-flex flex-wrap gap-3 mt-4">
+                        {% if developer.active_projects %}
+                        <a class="btn btn-outline-primary border-2 py-3 px-5" href="#works">View Works</a>
+                        {% endif %}
+                        <a class="btn btn-primary py-3 px-5" href="#lets-talk">Hire Me</a>
+                    </div>
+                    {% if developer.experience_years or developer.active_projects %}
+                    <div class="portfolio-stats d-flex flex-wrap mt-5">
+                        {% if developer.experience_years %}
+                        <div><strong>{{ developer.experience_years }}+</strong><span>Years experience</span></div>
+                        {% endif %}
+                        {% if developer.active_projects %}
+                        <div><strong>{{ developer.active_projects|length }}</strong><span>Projects done</span></div>
+                        {% endif %}
+                        {% if developer.is_available %}
+                        <div><strong><i class="fa-solid fa-circle-check"></i></strong><span>Open for work</span></div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="portfolio-hero-img animated fadeIn">
+                    {% if developer.photo %}
+                    <img src="{{ developer.photo.url }}" alt="{{ developer.name }}">
+                    {% else %}
+                    <div class="developer-placeholder rounded-circle"><span>{{ developer.initials }}</span></div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

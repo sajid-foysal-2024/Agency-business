@@ -1,48 +1,6 @@
 from django.db import models
-from django.utils import timezone
 
-
-# ---------------------------------------------------------------------------
-# Reusable base models
-# ---------------------------------------------------------------------------
-
-class TimeStampedModel(models.Model):
-    created_at = models.DateTimeField(default=timezone.now, editable=False)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        abstract = True
-
-
-class OrderedModel(TimeStampedModel):
-    """List items that admins can sort and hide without deleting."""
-
-    order = models.PositiveIntegerField(default=0, help_text="Lower numbers show first.")
-    is_active = models.BooleanField(default=True, help_text="Uncheck to hide from the website.")
-
-    class Meta:
-        abstract = True
-        ordering = ["order", "id"]
-
-
-class SingletonModel(models.Model):
-    """A model that only ever has one row (pk=1), edited from the admin."""
-
-    class Meta:
-        abstract = True
-
-    def save(self, *args, **kwargs):
-        self.pk = 1
-        super().save(*args, **kwargs)
-
-    def delete(self, *args, **kwargs):
-        # The single settings row should never be removed.
-        pass
-
-    @classmethod
-    def load(cls):
-        obj, _ = cls.objects.get_or_create(pk=1)
-        return obj
+from core.models import OrderedModel, SingletonModel, build_social_links
 
 
 # ---------------------------------------------------------------------------
@@ -60,6 +18,14 @@ class SiteSetting(SingletonModel):
     )
     logo = models.ImageField(upload_to="site/", blank=True)
     favicon = models.ImageField(upload_to="site/", blank=True)
+    founded_year = models.PositiveSmallIntegerField(null=True, blank=True,
+                                                    help_text='Used for the "Years Experience" counter.')
+    about_short = models.TextField("Short about text", blank=True, help_text="Shown in the footer.")
+
+    # Header button (top right)
+    header_button_text = models.CharField(max_length=40, blank=True, default="Let's Talk",
+                                          help_text="Leave blank to hide the button.")
+    header_button_link = models.CharField(max_length=200, blank=True, default="/#cta")
 
     # SEO
     meta_description = models.CharField(max_length=300, blank=True)
@@ -90,14 +56,7 @@ class SiteSetting(SingletonModel):
     @property
     def social_links(self):
         """Only the social links that are filled in, ready for templates."""
-        links = [
-            ("Facebook", "fa-brands fa-facebook-f", self.facebook_url),
-            ("X", "fa-brands fa-x-twitter", self.x_url),
-            ("Instagram", "fa-brands fa-instagram", self.instagram_url),
-            ("LinkedIn", "fa-brands fa-linkedin-in", self.linkedin_url),
-            ("YouTube", "fa-brands fa-youtube", self.youtube_url),
-        ]
-        return [{"name": n, "icon": i, "url": u} for n, i, u in links if u]
+        return build_social_links(self, ["facebook_url", "x_url", "instagram_url", "linkedin_url", "youtube_url"])
 
 
 # ---------------------------------------------------------------------------
@@ -112,8 +71,31 @@ class HomePage(SingletonModel):
     services_subtitle = models.CharField(max_length=100, default="Services")
     services_title = models.CharField(max_length=150, default="How We Help You")
 
+    show_stats = models.BooleanField("Show counters", default=True)
+
+    features_subtitle = models.CharField(max_length=100, default="Why Choose Us")
+    features_title = models.CharField(max_length=150, default="What Makes Us Different")
+    features_text = models.TextField(blank=True)
+
+    works_subtitle = models.CharField(max_length=100, default="Portfolio")
+    works_title = models.CharField(max_length=150, default="Our Recent Works")
+    works_limit = models.PositiveSmallIntegerField(default=6, help_text="How many featured projects to show.")
+
+    process_subtitle = models.CharField(max_length=100, default="Process")
+    process_title = models.CharField(max_length=150, default="How We Work")
+
+    clients_subtitle = models.CharField(max_length=100, default="Clients")
+    clients_title = models.CharField(max_length=150, default="Trusted By")
+
+    show_cta = models.BooleanField("Show call-to-action banner", default=True)
+    cta_title = models.CharField(max_length=150, default="Have a project in mind?")
+    cta_text = models.TextField(blank=True, default="Tell us about your idea and we will help you build it.")
+    cta_button_text = models.CharField(max_length=50, blank=True, default="Start a Project")
+    cta_button_link = models.CharField(max_length=200, blank=True, default="#newsletter")
+
     team_subtitle = models.CharField(max_length=100, default="Team")
     team_title = models.CharField(max_length=150, default="Meet Our Experts")
+    team_button_text = models.CharField(max_length=50, default="View All Developers", blank=True)
 
     testimonials_subtitle = models.CharField(max_length=100, default="Testimonial")
     testimonials_title = models.CharField(max_length=150, default="Our Clients Say")
@@ -139,6 +121,8 @@ class HeroSlide(OrderedModel):
     text = models.TextField(blank=True)
     button_text = models.CharField(max_length=50, default="Explore More", blank=True)
     button_link = models.CharField(max_length=200, blank=True, help_text='A URL or a section link like "#about".')
+    second_button_text = models.CharField(max_length=50, blank=True, default="Our Services")
+    second_button_link = models.CharField(max_length=200, blank=True, default="#services")
 
     class Meta(OrderedModel.Meta):
         verbose_name = "Hero slide"
@@ -189,31 +173,70 @@ class Service(OrderedModel):
         return self.title
 
 
-class TeamMember(OrderedModel):
-    name = models.CharField(max_length=100)
-    role = models.CharField(max_length=100, blank=True, help_text='e.g. "Web Developer"')
-    photo = models.ImageField(upload_to="team/")
-    bio = models.TextField(blank=True)
-    facebook_url = models.URLField(blank=True)
-    x_url = models.URLField("X (Twitter) URL", blank=True)
-    instagram_url = models.URLField(blank=True)
-    linkedin_url = models.URLField(blank=True)
+class Stat(OrderedModel):
+    """One counter in the stats bar. Numbers can be counted automatically from the database."""
+
+    SOURCE_MANUAL = "manual"
+    SOURCE_YEARS = "years"
+    SOURCE_PROJECTS = "projects"
+    SOURCE_DEVELOPERS = "developers"
+    SOURCE_CLIENTS = "clients"
+    SOURCE_CHOICES = [
+        (SOURCE_MANUAL, "Type the number myself"),
+        (SOURCE_YEARS, "Auto: years since founded (Site settings)"),
+        (SOURCE_PROJECTS, "Auto: number of projects"),
+        (SOURCE_DEVELOPERS, "Auto: number of developers"),
+        (SOURCE_CLIENTS, "Auto: number of client reviews + testimonials"),
+    ]
+
+    label = models.CharField(max_length=60)
+    icon = models.CharField(max_length=60, blank=True, default="fa-solid fa-star",
+                            help_text='Font Awesome class, e.g. "fa-solid fa-briefcase".')
+    source = models.CharField(max_length=20, choices=SOURCE_CHOICES, default=SOURCE_MANUAL)
+    value = models.PositiveIntegerField(default=0, help_text='Only used when source is "Type the number myself".')
+    suffix = models.CharField(max_length=5, blank=True, default="+", help_text='e.g. "+" or "%"')
+
+    def __str__(self):
+        return self.label
+
+
+class Feature(OrderedModel):
+    """A "Why choose us" card."""
+
+    title = models.CharField(max_length=100)
+    text = models.TextField(blank=True)
+    icon = models.CharField(max_length=60, blank=True, default="fa-solid fa-check",
+                            help_text='Font Awesome class, e.g. "fa-solid fa-rocket".')
+
+    def __str__(self):
+        return self.title
+
+
+class ProcessStep(OrderedModel):
+    """One step of "How we work". Steps are numbered by their order."""
+
+    title = models.CharField(max_length=100)
+    text = models.TextField(blank=True)
+    icon = models.CharField(max_length=60, blank=True, default="fa-solid fa-circle",
+                            help_text='Font Awesome class, e.g. "fa-solid fa-comments".')
 
     class Meta(OrderedModel.Meta):
-        verbose_name = "Team member"
+        verbose_name = "Process step"
+
+    def __str__(self):
+        return self.title
+
+
+class ClientLogo(OrderedModel):
+    name = models.CharField(max_length=100)
+    logo = models.ImageField(upload_to="clients/")
+    website = models.URLField(blank=True)
+
+    class Meta(OrderedModel.Meta):
+        verbose_name = "Client logo"
 
     def __str__(self):
         return self.name
-
-    @property
-    def social_links(self):
-        links = [
-            ("Facebook", "fa-brands fa-facebook-f", self.facebook_url),
-            ("X", "fa-brands fa-x-twitter", self.x_url),
-            ("Instagram", "fa-brands fa-instagram", self.instagram_url),
-            ("LinkedIn", "fa-brands fa-linkedin-in", self.linkedin_url),
-        ]
-        return [{"name": n, "icon": i, "url": u} for n, i, u in links if u]
 
 
 class Testimonial(OrderedModel):

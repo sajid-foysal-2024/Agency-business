@@ -1,0 +1,10 @@
+{# One project in a "works" gallery. Param: project #}
+<div class="single-work wow fadeInUp" data-wow-delay="0.1s">
+    <a class="work-thumb d-block" href="{{ project.get_absolute_url }}">
+        <img class="img-fluid w-100" src="{{ project.image.url }}" alt="{{ project.title }}" loading="lazy">
+    </a>
+    <div class="work-heading">
+        {% if project.category %}<span>{{ project.category }}</span>{% endif %}
+        <a href="{{ project.get_absolute_url }}"><h4 class="text-uppercase">{{ project.title }}</h4></a>
+    </div>
+</div>
