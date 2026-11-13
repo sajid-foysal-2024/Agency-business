@@ -30,6 +30,11 @@ class Developer(OrderedModel):
                               help_text="A cut-out photo (transparent PNG) looks best on the portfolio hero.")
 
     # Portfolio texts
+    short_description = models.TextField(
+        max_length=400, blank=True,
+        help_text="2-3 sentences about skills, expertise and responsibilities. "
+                  "Shown on the team page. Falls back to the headline / bio when empty.",
+    )
     headline = models.CharField(max_length=255, blank=True,
                                 help_text="Big intro line in the About part, e.g. \"I'm a developer based in Dhaka who loves clean code.\"")
     bio = models.TextField(blank=True, help_text="About text. Leave an empty line between paragraphs.")
@@ -92,6 +97,11 @@ class Developer(OrderedModel):
         return build_social_links(self, DEVELOPER_SOCIAL_FIELDS)
 
     @property
+    def team_summary(self):
+        """Text for the team page: short description, else headline, else the start of the bio."""
+        return self.short_description or self.headline or self.bio
+
+    @property
     def bio_paragraphs(self):
         return [p.strip() for p in self.bio.split("\n\n") if p.strip()]
 
@@ -140,7 +150,7 @@ class Project(OrderedModel):
     title = models.CharField(max_length=150)
     slug = models.SlugField(max_length=170, blank=True)
     category = models.CharField(max_length=60, blank=True, help_text='e.g. "Mobile App", "Website"')
-    image = models.ImageField(upload_to="developers/projects/")
+    image = models.ImageField(upload_to="developers/projects/", blank=True)
     summary = models.CharField(max_length=255, blank=True, help_text="One line shown on the details page header.")
     description = models.TextField(blank=True)
     client = models.CharField(max_length=100, blank=True)

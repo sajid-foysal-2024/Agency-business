@@ -1,0 +1,9 @@
+{# Project image, or a placeholder when no image is uploaded. Params: project, img_class #}
+{% if project.image %}
+<img class="{{ img_class|default:'img-fluid w-100' }}" src="{{ project.image.url }}" alt="{{ project.title }}" loading="lazy">
+{% else %}
+<div class="project-placeholder {{ img_class|default:'' }}" role="img" aria-label="{{ project.title }}">
+    <i class="fa-solid fa-laptop-code"></i>
+    {% if project.category %}<span>{{ project.category }}</span>{% endif %}
+</div>
+{% endif %}

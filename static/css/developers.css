@@ -359,3 +359,120 @@
 .project-nav {
     border-top: 1px solid rgba(255, 255, 255, .1);
 }
+
+
+/*** Team page: alternating full-width profiles ***/
+.team-profile {
+    padding: 4rem 0;
+}
+
+.team-profile + .team-profile {
+    border-top: 1px solid rgba(255, 255, 255, .08);
+}
+
+/* Portrait image, 4:5, with an accent frame behind it */
+.team-profile-img {
+    position: relative;
+    max-width: 420px;
+    margin: 0 auto;
+}
+
+.team-profile-img::before {
+    position: absolute;
+    content: "";
+    inset: 20px -20px -20px 20px;
+    border: 2px solid var(--bs-primary);
+    border-radius: 30px;
+    transition: .5s;
+}
+
+.team-profile-right .team-profile-img::before {
+    inset: 20px 20px -20px -20px;
+}
+
+.team-profile-img img,
+.team-profile-img .developer-placeholder {
+    position: relative;
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: 30px;
+    transition: .5s;
+}
+
+.team-profile-img:hover::before {
+    inset: 0;
+}
+
+.team-profile-img:hover img {
+    filter: brightness(.85);
+}
+
+/* Info column */
+.team-profile-info {
+    position: relative;
+}
+
+.team-profile-number {
+    position: absolute;
+    top: -55px;
+    right: 0;
+    font-family: "Josefin Sans", sans-serif;
+    font-size: 7rem;
+    font-weight: 700;
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(255, 255, 255, .12);
+    pointer-events: none;
+    user-select: none;
+}
+
+.team-profile-info h3 {
+    color: var(--bs-white);
+}
+
+.team-profile-info p {
+    max-width: 600px;
+    line-height: 1.8;
+}
+
+@media (min-width: 992px) {
+    /* Info sits next to the image: align text towards it */
+    .team-profile:not(.team-profile-right) .team-profile-info {
+        padding-left: 2rem;
+    }
+
+    .team-profile-right .team-profile-info {
+        padding-right: 2rem;
+    }
+
+    .team-profile-right .team-profile-number {
+        right: 2rem;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .team-profile {
+        padding: 3rem 0;
+        text-align: center;
+    }
+
+    .team-profile-img {
+        max-width: 340px;
+        margin-bottom: 1rem;
+    }
+
+    .team-profile-info p {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .team-profile-info .d-flex {
+        justify-content: center;
+    }
+
+    .team-profile-number {
+        display: none;
+    }
+}

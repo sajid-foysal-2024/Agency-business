@@ -71,6 +71,27 @@ class DeveloperPageTests(TestCase):
         self.assertContains(response, "Full Stack Developer")
         self.assertNotContains(response, "Former Employee")
 
+    def test_team_page_heading_and_learn_more_link(self):
+        response = self.client.get(reverse("developers:list"))
+        self.assertContains(response, "Meet the Whole Team")
+        self.assertContains(response, "The creative minds and talented developers")
+        self.assertContains(response, "Learn More")
+        self.assertContains(response, f'href="{self.dev.get_absolute_url()}"')
+
+    def test_team_profiles_alternate_left_and_right(self):
+        Developer.objects.create(name="Second Dev")
+        Developer.objects.create(name="Third Dev")
+        html = self.client.get(reverse("developers:list")).content.decode()
+        profiles = html.split('<article class="team-profile')[1:]
+        self.assertEqual(len(profiles), 3)
+        right = [p.startswith(" row g-5 align-items-center team-profile-right") for p in profiles]
+        self.assertEqual(right, [True, False, True])  # 1st right, 2nd left, 3rd right
+
+    def test_team_summary_falls_back_to_headline(self):
+        self.assertEqual(self.dev.team_summary, "I build clean websites.")
+        self.dev.short_description = "Builds Django backends."
+        self.assertEqual(self.dev.team_summary, "Builds Django backends.")
+
     def test_portfolio_page_shows_all_sections(self):
         response = self.client.get(self.dev.get_absolute_url())
         self.assertEqual(response.status_code, 200)

@@ -1,0 +1,47 @@
+{# One full-width team profile. Odd profiles: image right. Even profiles: image left.
+   Params: developer, number (1-based position) #}
+<article class="team-profile row g-5 align-items-center{% if not number|divisibleby:2 %} team-profile-right{% endif %}">
+    <div class="col-lg-5 col-md-8 mx-auto {% if not number|divisibleby:2 %}order-lg-2{% endif %} wow {% if not number|divisibleby:2 %}fadeInRight{% else %}fadeInLeft{% endif %}" data-wow-delay="0.2s">
+        <a href="{{ developer.get_absolute_url }}" class="team-profile-img d-block" aria-label="{{ developer.name }}">
+            {% if developer.photo %}
+            <img src="{{ developer.photo.url }}" alt="{{ developer.name }}" loading="lazy">
+            {% else %}
+            <div class="developer-placeholder"><span>{{ developer.initials }}</span></div>
+            {% endif %}
+            {% if developer.is_available %}
+            <span class="developer-badge"><i class="fa-solid fa-circle me-1"></i>Available</span>
+            {% endif %}
+        </a>
+    </div>
+
+    <div class="col-lg-7 {% if not number|divisibleby:2 %}order-lg-1{% endif %} wow fadeInUp" data-wow-delay="0.3s">
+        <div class="team-profile-info">
+            <span class="team-profile-number">{{ number|stringformat:"02d" }}</span>
+            {% if developer.designation %}
+            <h5 class="text-primary text-uppercase mb-2">{{ developer.designation }}</h5>
+            {% endif %}
+            <h3 class="display-6 text-uppercase mb-4">{{ developer.name }}</h3>
+
+            {% if developer.team_summary %}
+            <p class="mb-4">{{ developer.team_summary|truncatewords:55 }}</p>
+            {% endif %}
+
+            {% if developer.skills.all %}
+            <div class="developer-skill-tags mb-4">
+                {% for skill in developer.skills.all|slice:":6" %}<span>{{ skill.name }}</span>{% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="d-flex flex-wrap align-items-center gap-3">
+                <a href="{{ developer.get_absolute_url }}" class="btn btn-primary py-3 px-5">
+                    Learn More <i class="fa-solid fa-arrow-right ms-1"></i>
+                </a>
+                {% if developer.social_links %}
+                <div class="d-flex flex-wrap">
+                    {% include "partials/_social_links.html" with links=developer.social_links|slice:":4" btn_class="btn-square btn-outline-primary border-2 me-2" %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</article>

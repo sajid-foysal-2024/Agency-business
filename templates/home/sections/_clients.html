@@ -8,7 +8,7 @@
             {% for client in client_logos %}
             <div class="col-lg-2 col-md-3 col-4 wow fadeIn" data-wow-delay="0.1s">
                 {% if client.website %}<a href="{{ client.website }}" target="_blank" rel="noopener" class="client-logo">{% else %}<div class="client-logo">{% endif %}
-                    <img class="img-fluid" src="{{ client.logo.url }}" alt="{{ client.name }}" loading="lazy">
+                    {% if client.logo %}<img class="img-fluid" src="{{ client.logo.url }}" alt="{{ client.name }}" loading="lazy">{% else %}<span class="text-white text-uppercase fw-bold">{{ client.name }}</span>{% endif %}
                 {% if client.website %}</a>{% else %}</div>{% endif %}
             </div>
             {% endfor %}

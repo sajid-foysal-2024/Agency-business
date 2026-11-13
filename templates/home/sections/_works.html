@@ -8,7 +8,7 @@
             {% for project in featured_projects %}
             <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="{% cycle '0.1s' '0.3s' '0.5s' %}">
                 <div class="home-work-item">
-                    <img class="img-fluid w-100" src="{{ project.image.url }}" alt="{{ project.title }}" loading="lazy">
+                    {% include "developers/partials/_project_image.html" %}
                     <div class="home-work-overlay">
                         {% if project.category %}<span class="text-primary text-uppercase small">{{ project.category }}</span>{% endif %}
                         <h4 class="text-uppercase my-2">{{ project.title }}</h4>

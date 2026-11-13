@@ -141,3 +141,17 @@ class ProfessionalSectionsTests(TestCase):
         response = self.client.get(reverse("home:index"))
         self.assertNotContains(response, 'id="cta"')
         self.assertNotContains(response, "header-btn")
+
+
+class MissingImageTests(TestCase):
+    """Content without an uploaded image must never crash a page (was a 500 error)."""
+
+    def test_pages_render_when_project_has_no_image(self):
+        from developers.models import Developer, Project
+        dev = Developer.objects.create(name="No Image Dev")
+        project = Project.objects.create(developer=dev, title="Imageless Project")
+        for url in [reverse("home:index"), dev.get_absolute_url(),
+                    reverse("developers:works", args=[dev.slug]), project.get_absolute_url()]:
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, 200, url)
+        self.assertContains(self.client.get(reverse("home:index")), "project-placeholder")

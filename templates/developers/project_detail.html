@@ -13,7 +13,7 @@
         <div class="container pb-5">
             <div class="row g-5">
                 <div class="col-lg-8 wow fadeInUp" data-wow-delay="0.1s">
-                    <img class="img-fluid w-100 mb-5 project-cover" src="{{ project.image.url }}" alt="{{ project.title }}">
+                    {% if project.image %}<img class="img-fluid w-100 mb-5 project-cover" src="{{ project.image.url }}" alt="{{ project.title }}">{% endif %}
                     {% if project.description %}
                     <div class="project-description">{{ project.description|linebreaks }}</div>
                     {% endif %}

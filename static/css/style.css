@@ -804,3 +804,28 @@ section[id] {
     background: var(--bs-primary);
     border-color: var(--bs-primary);
 }
+
+
+/*** Project placeholder (when a project has no image) ***/
+.project-placeholder {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: var(--bs-primary);
+    background: linear-gradient(135deg, var(--bs-secondary), var(--bs-dark));
+    border: 1px solid rgba(255, 255, 255, .08);
+}
+
+.project-placeholder i {
+    font-size: 3rem;
+}
+
+.project-placeholder span {
+    font-size: 14px;
+    text-transform: uppercase;
+    color: var(--bs-white);
+}

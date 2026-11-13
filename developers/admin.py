@@ -44,7 +44,7 @@ class DeveloperAdmin(OrderedAdmin):
     prepopulated_fields = {"slug": ("name",)}
     inlines = [SkillInline, DeveloperServiceInline, ProjectInline, ClientReviewInline]
     fieldsets = (
-        ("Basic info", {"fields": ("name", "slug", "designation", "photo")}),
+        ("Basic info", {"fields": ("name", "slug", "designation", "photo", "short_description")}),
         ("Portfolio", {"fields": ("headline", "bio", "cv")}),
         ("Work", {"fields": ("experience_years", "joined_on", "is_available",
                              "show_on_home", "order", "is_active")}),
