@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Order {{ order.number }} | {{ site.brand_name }}{% endblock %}
+{% block extra_css %}<link href="{% static 'css/contact.css' %}" rel="stylesheet"><link href="{% static 'css/checkout.css' %}" rel="stylesheet">{% endblock %}
+
+{% block content %}
+<div class="contact-page checkout-page">
+    {% include "partials/_page_header.html" with title="Order "|add:order.number %}
+
+    <section class="container pb-5">
+        <div class="row g-5">
+            <div class="col-lg-7 wow fadeInUp" data-wow-delay="0.1s">
+                <div class="contact-form-card">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+                        <h2 class="contact-form-title mb-0">Order status</h2>
+                        {% include "orders/partials/_status.html" with value=order.status label=order.get_status_display %}
+                    </div>
+
+                    <div class="order-status-message mb-4" role="status">
+                        {% if order.status == "paid" %}
+                        <i class="fa-solid fa-circle-check"></i> Payment confirmed. We will start your project shortly.
+                        {% elif order.status == "in_progress" %}
+                        <i class="fa-solid fa-gears"></i> Your project is in progress.
+                        {% elif order.status == "completed" %}
+                        <i class="fa-solid fa-flag-checkered"></i> This order is completed. Thank you!
+                        {% elif order.status == "payment_processing" %}
+                        <i class="fa-solid fa-hourglass-half"></i> Your payment is being processed. This page updates once the provider confirms it.
+                        {% elif order.status == "pending_payment" %}
+                        <i class="fa-solid fa-clock"></i> Waiting for payment.{% if show_instructions %} We will confirm it as soon as the money arrives.{% endif %}
+                        {% elif order.status == "failed" %}
+                        <i class="fa-solid fa-circle-xmark"></i> The payment did not go through. You can try again.
+                        {% elif order.status == "cancelled" %}
+                        <i class="fa-solid fa-ban"></i> This order was cancelled.
+                        {% elif order.status == "refunded" %}
+                        <i class="fa-solid fa-rotate-left"></i> This order was refunded.
+                        {% else %}
+                        <i class="fa-solid fa-pen"></i> This order has not been paid yet.
+                        {% endif %}
+                    </div>
+
+                    {% include "orders/partials/_summary.html" %}
+
+                    {% if order.payments.all %}
+                    <h3 class="order-subtitle mt-5">Payments</h3>
+                    <div class="table-responsive">
+                        <table class="table order-table mb-0">
+                            <thead><tr><th scope="col">Reference</th><th scope="col">Method</th><th scope="col">Status</th><th scope="col" class="text-end">Amount</th></tr></thead>
+                            <tbody>
+                                {% for payment in order.payments.all %}
+                                <tr>
+                                    <td>{{ payment.reference }}{% if payment.is_sandbox %} <span class="order-tag">DEMO</span>{% endif %}</td>
+                                    <td>{{ payment.provider|capfirst }}</td>
+                                    <td>{% include "orders/partials/_status.html" with value=payment.status label=payment.get_status_display %}</td>
+                                    <td class="text-end">{{ payment.display_amount }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="col-lg-5 wow fadeInUp" data-wow-delay="0.2s">
+                <aside class="checkout-summary">
+                    <p class="order-big-total">Total <strong>{{ order.display_total }}</strong></p>
+                    {% if order.is_payable %}
+                    <a href="{% url 'orders:review' order.number %}" class="btn btn-primary w-100 py-3 mb-3 contact-btn">{% if order.status == "failed" %}Try payment again{% else %}Pay now{% endif %}</a>
+                    {% endif %}
+                    {% if show_instructions %}
+                    <a href="{% url 'payments:instructions' latest_payment.reference %}" class="btn btn-outline-primary border-2 w-100 py-3 mb-3">Payment instructions</a>
+                    {% endif %}
+                    {% if invoice %}
+                    <a href="{% url 'orders:invoice' order.number %}" class="btn btn-outline-primary border-2 w-100 py-3 mb-3"><i class="fa-solid fa-file-invoice me-2"></i>Invoice {{ invoice.number }}</a>
+                    {% endif %}
+                    <a href="{% url 'contact:index' %}" class="btn btn-link w-100 text-body">Questions? Contact us</a>
+                    <a href="{% url 'orders:dashboard' %}" class="btn btn-link w-100 text-body">Back to My Orders</a>
+                </aside>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

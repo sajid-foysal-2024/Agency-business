@@ -1,4 +1,4 @@
-{% url 'home:index' as home_url %}
+{% load payment_tags %}{% url 'home:index' as home_url %}
 <footer class="container-fluid bg-dark text-light footer pt-5 wow fadeIn" data-wow-delay="0.1s">
     <div class="container py-5">
         <div class="row g-5">
@@ -22,10 +22,10 @@
                 <h5 class="text-uppercase text-white footer-heading mb-4">Quick Links</h5>
                 <ul class="list-unstyled footer-links mb-0">
                     <li><a href="{{ home_url }}#about">About Us</a></li>
-                    <li><a href="{{ home_url }}#services">Services</a></li>
+                    <li><a href="{% url 'services:list' %}">Services</a></li>
                     <li><a href="{% url 'developers:list' %}">Developers</a></li>
                     <li><a href="{{ home_url }}#testimonial">Testimonials</a></li>
-                    <li><a href="{{ home_url }}#newsletter">Contact</a></li>
+                    <li><a href="{% url 'contact:index' %}">Contact</a></li>
                 </ul>
             </div>
 
@@ -34,7 +34,7 @@
                 <h5 class="text-uppercase text-white footer-heading mb-4">Services</h5>
                 <ul class="list-unstyled footer-links mb-0">
                     {% for service in footer_services %}
-                    <li><a href="{{ home_url }}#services">{{ service.title }}</a></li>
+                    <li><a href="{{ service.get_absolute_url }}">{{ service.title }}</a></li>
                     {% endfor %}
                 </ul>
             </div>
@@ -52,6 +52,8 @@
             {% endif %}
         </div>
     </div>
+
+    <div class="container pb-5">{% accepted_payments "footer" %}</div>
 
     <div class="container footer-bottom py-4">
         <div class="row g-2 align-items-center">

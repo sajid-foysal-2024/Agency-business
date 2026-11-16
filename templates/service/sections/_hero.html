@@ -1,0 +1,29 @@
+{% load static %}
+<section class="service-hero" style="--service-hero-bg: url('{% if service.hero_background_url %}{{ service.hero_background_url }}{% else %}{% static 'img/carousel-1.png' %}{% endif %}');">
+    <div class="container text-center">
+        <nav aria-label="breadcrumb" class="animated fadeInDown">
+            <ol class="breadcrumb justify-content-center text-uppercase mb-4">
+                <li class="breadcrumb-item"><a class="text-white" href="{% url 'home:index' %}">Home</a></li>
+                <li class="breadcrumb-item"><a class="text-white" href="{% url 'services:list' %}">Services</a></li>
+                <li class="breadcrumb-item text-primary active" aria-current="page">{{ service.title|title }}</li>
+            </ol>
+        </nav>
+        {% if service.hero_subtitle %}<p class="service-hero-subtitle animated fadeInUp">{{ service.hero_subtitle }}</p>{% endif %}
+        <h1 class="display-3 text-white text-uppercase animated fadeInUp">{{ service.title }}</h1>
+        <p class="service-hero-text mx-auto mb-4 animated fadeInUp">{{ service.description }}</p>
+        {% if service.delivery_time %}
+        <p class="service-meta justify-content-center animated fadeInUp"><span><i class="fa-regular fa-clock" aria-hidden="true"></i>Typical delivery: {{ service.delivery_time }}</span></p>
+        {% endif %}
+        <div class="mb-4"></div>
+        <div class="d-flex flex-wrap justify-content-center gap-3 animated fadeInUp">
+            {% if single_packages or combo_packages %}
+            <a href="#pricing" class="btn btn-primary py-3 px-5 service-btn">View Packages</a>
+            {% endif %}
+            {% if whatsapp_url %}
+            <a href="{{ whatsapp_url }}" class="btn btn-outline-primary border-2 py-3 px-5 service-btn" target="_blank" rel="noopener">
+                <i class="fa-brands fa-whatsapp me-2" aria-hidden="true"></i>Discuss on WhatsApp
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</section>

@@ -1,0 +1,634 @@
+/********** Service & pricing pages **********/
+/* Loaded only on /services/ pages. Uses the theme colors from bootstrap.min.css
+   (--bs-primary, --bs-secondary, --bs-dark) and the existing .title / .feature-item styles. */
+
+.service-page {
+    --card-radius: 24px;
+    --ease: cubic-bezier(.22, .61, .36, 1);
+    --line: rgba(255, 255, 255, .08);
+}
+
+
+/*** Shared hover helpers ***/
+.service-btn {
+    transition: transform .3s var(--ease), background-color .3s, color .3s, border-color .3s;
+}
+
+.service-btn:hover,
+.service-btn:focus-visible {
+    transform: scale(1.03);
+}
+
+.service-zoom {
+    overflow: hidden;
+    border-radius: var(--card-radius);
+}
+
+.service-zoom img {
+    display: block;
+    width: 100%;
+    transition: transform .8s var(--ease);
+}
+
+.service-zoom:hover img {
+    transform: scale(1.05);
+}
+
+
+/*** Hero ***/
+.service-hero {
+    padding: 200px 0 120px;
+    background:
+        linear-gradient(rgba(13, 13, 13, .82), rgba(13, 13, 13, .92)),
+        var(--service-hero-bg) center / cover no-repeat;
+}
+
+.service-hero .breadcrumb {
+    background: transparent;
+    font-size: 14px;
+}
+
+.service-hero .breadcrumb a {
+    text-decoration: none;
+}
+
+.service-hero-subtitle {
+    margin-bottom: 12px;
+    font-size: 15px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--bs-primary);
+}
+
+.service-hero-text {
+    max-width: 640px;
+    font-size: 1.1rem;
+}
+
+
+/*** Overview ***/
+.service-overview-text p {
+    line-height: 1.9;
+}
+
+
+/*** Group headings inside a section ***/
+.pricing-group + .pricing-group {
+    margin-top: 5rem;
+}
+
+.pricing-group-title {
+    margin-bottom: 2rem;
+    font-size: 1.25rem;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--bs-white);
+}
+
+
+/*** Currency switch ***/
+.currency-switch {
+    position: relative;
+    display: inline-grid;
+    grid-template-columns: 1fr 1fr;
+    margin-bottom: 3rem;
+    padding: 5px;
+    border: 1px solid var(--line);
+    border-radius: 50px;
+    background: var(--bs-secondary);
+}
+
+.currency-switch-indicator {
+    position: absolute;
+    top: 5px;
+    bottom: 5px;
+    left: 5px;
+    width: calc(50% - 5px);
+    border-radius: 50px;
+    background: var(--bs-primary);
+    transition: transform .35s var(--ease);
+}
+
+.currency-scope[data-currency="usd"] .currency-switch-indicator {
+    transform: translateX(100%);
+}
+
+.currency-option {
+    position: relative;
+    z-index: 1;
+    min-width: 100px;
+    padding: 10px 22px;
+    font-weight: 600;
+    color: var(--bs-body-color);
+    background: none;
+    border: 0;
+    border-radius: 50px;
+    transition: color .3s;
+}
+
+.currency-option[aria-pressed="true"] {
+    color: var(--bs-white);
+}
+
+.currency-option:focus-visible {
+    outline: 2px solid var(--bs-white);
+    outline-offset: 2px;
+}
+
+
+/*** Prices: both currencies stacked, the selected one fades in ***/
+.price-stack {
+    display: grid;
+}
+
+.price-line {
+    grid-area: 1 / 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 10px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px);
+    transition: opacity .35s var(--ease), transform .35s var(--ease), visibility 0s linear .35s;
+}
+
+.currency-scope[data-currency="bdt"] .price-line[data-price-currency="bdt"],
+.currency-scope[data-currency="usd"] .price-line[data-price-currency="usd"] {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition: opacity .35s var(--ease), transform .35s var(--ease), visibility 0s;
+}
+
+.price-amount {
+    font-family: "Josefin Sans", sans-serif;
+    font-size: 2.25rem;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--bs-white);
+}
+
+.price-regular {
+    font-size: 1rem;
+    opacity: .55;
+}
+
+.price-request {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--bs-white);
+}
+
+
+/*** Package card ***/
+.package-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 40px 32px 32px;
+    background: var(--bs-secondary);
+    border: 1px solid var(--line);
+    border-radius: var(--card-radius);
+    transition: transform .4s var(--ease), border-color .4s, box-shadow .4s;
+    will-change: transform;
+}
+
+.package-card:hover,
+.package-card:focus-within {
+    transform: translateY(-6px);
+    border-color: rgba(228, 23, 121, .6);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, .45), 0 0 0 1px rgba(228, 23, 121, .15);
+}
+
+.package-card.is-popular {
+    border-color: var(--bs-primary);
+}
+
+.package-badge {
+    position: absolute;
+    top: -13px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 5px 18px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--bs-white);
+    background: var(--bs-primary);
+    border-radius: 50px;
+    animation: badge-pulse 2.8s ease-in-out infinite;
+}
+
+/* Gentle glow, no movement */
+@keyframes badge-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(228, 23, 121, .45); }
+    50% { box-shadow: 0 0 0 7px rgba(228, 23, 121, 0); }
+}
+
+.package-type {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--bs-primary);
+}
+
+.package-name {
+    margin-bottom: 8px;
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    color: var(--bs-white);
+}
+
+.package-tagline {
+    font-size: 15px;
+}
+
+.package-includes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 18px;
+}
+
+.package-includes a {
+    padding: 3px 12px;
+    font-size: 13px;
+    color: var(--bs-white);
+    text-decoration: none;
+    border: 1px solid var(--line);
+    border-radius: 50px;
+    transition: border-color .3s, color .3s;
+}
+
+.package-includes a:hover {
+    color: var(--bs-primary);
+    border-color: var(--bs-primary);
+}
+
+.package-price {
+    margin: 26px 0;
+    padding: 22px 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+}
+
+.package-price-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+    font-size: 14px;
+}
+
+.package-discount {
+    padding: 2px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--bs-primary);
+    border: 1px solid var(--bs-primary);
+    border-radius: 50px;
+}
+
+.package-features {
+    flex-grow: 1;
+    margin: 0 0 24px;
+    padding: 0;
+    list-style: none;
+}
+
+.package-features li {
+    display: flex;
+    gap: 12px;
+    padding: 7px 0;
+    color: var(--bs-white);
+    transition: transform .3s var(--ease), color .3s;
+}
+
+.package-features li i {
+    margin-top: 5px;
+    font-size: 13px;
+    color: var(--bs-primary);
+}
+
+.package-features li:hover {
+    transform: translateX(4px);
+}
+
+.package-features li.is-excluded {
+    color: var(--bs-body-color);
+    opacity: .55;
+}
+
+.package-features li.is-excluded i {
+    color: inherit;
+}
+
+.package-delivery {
+    margin-bottom: 14px;
+    font-size: 14px;
+}
+
+.package-btn {
+    transition: transform .3s var(--ease), background-color .3s, color .3s, border-color .3s;
+}
+
+.package-btn:hover,
+.package-btn:focus-visible {
+    transform: scale(1.03);
+}
+
+
+/*** Service cards (services list) ***/
+.service-card {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--bs-secondary);
+    border: 1px solid var(--line);
+    border-radius: var(--card-radius);
+    transition: transform .4s var(--ease), border-color .4s;
+}
+
+.service-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(228, 23, 121, .6);
+}
+
+.service-card-img {
+    border-radius: 0;
+}
+
+.service-card-img img,
+.service-card-icon {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+}
+
+.service-card-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: var(--bs-primary);
+    background: var(--bs-dark);
+}
+
+.service-card-body {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    padding: 28px;
+}
+
+.service-card-body h3 {
+    font-size: 1.35rem;
+}
+
+.service-card-body h3 a {
+    color: var(--bs-white);
+    text-decoration: none;
+    transition: color .3s;
+}
+
+.service-card-body h3 a:hover {
+    color: var(--bs-primary);
+}
+
+.service-card-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: auto;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+}
+
+.service-card-price > span {
+    display: block;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.service-card-price .price-amount {
+    font-size: 1.5rem;
+}
+
+
+/*** FAQ ***/
+.service-faq .accordion-item {
+    margin-bottom: 12px;
+    background: var(--bs-dark);
+    border: 1px solid var(--line);
+    border-radius: 16px !important;
+    overflow: hidden;
+    transition: border-color .3s;
+}
+
+.service-faq .accordion-item:hover {
+    border-color: rgba(228, 23, 121, .4);
+}
+
+.service-faq .accordion-button {
+    padding: 20px 24px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--bs-white);
+    background: transparent;
+    box-shadow: none;
+}
+
+.service-faq .accordion-button:not(.collapsed) {
+    color: var(--bs-primary);
+}
+
+.service-faq .accordion-button:focus-visible {
+    outline: 2px solid var(--bs-primary);
+    outline-offset: -2px;
+}
+
+/* Make the arrow icon light on the dark background */
+.service-faq .accordion-button::after {
+    filter: invert(1) grayscale(1) brightness(2);
+}
+
+.service-faq .accordion-button:not(.collapsed)::after {
+    filter: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23E41779'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+}
+
+.service-faq .accordion-body {
+    padding: 0 24px 22px;
+    line-height: 1.8;
+}
+
+
+/*** WhatsApp CTA ***/
+.whatsapp-cta {
+    padding: 50px;
+    background: var(--bs-secondary);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--bs-primary);
+    border-radius: var(--card-radius);
+}
+
+.whatsapp-cta h2 {
+    font-size: 1.75rem;
+    color: var(--bs-white);
+}
+
+
+/*** Small screens ***/
+@media (max-width: 767.98px) {
+    .service-hero {
+        padding: 150px 0 80px;
+    }
+
+    .package-card {
+        padding: 36px 24px 26px;
+    }
+
+    .whatsapp-cta {
+        padding: 32px 24px;
+        text-align: center;
+    }
+}
+
+
+/*** Respect "reduce motion" system setting ***/
+@media (prefers-reduced-motion: reduce) {
+    .service-page *,
+    .service-page *::before,
+    .service-page *::after {
+        animation: none !important;
+        transition-duration: .01ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    /* WOW.js hides elements until they animate; show them straight away */
+    .service-page .wow {
+        visibility: visible !important;
+    }
+
+    .package-card:hover,
+    .service-card:hover,
+    .service-btn:hover,
+    .package-btn:hover,
+    .package-features li:hover,
+    .service-zoom:hover img {
+        transform: none;
+    }
+}
+
+
+/*** Per-currency elements (buttons that differ by currency) ***/
+.currency-scope[data-currency="bdt"] [data-only="usd"],
+.currency-scope[data-currency="usd"] [data-only="bdt"] {
+    display: none;
+}
+
+.package-wa-link {
+    display: block;
+    margin-top: 12px;
+    font-size: 14px;
+    text-align: center;
+    color: var(--bs-body-color);
+    text-decoration: none;
+    transition: color .3s;
+}
+
+.package-wa-link:hover {
+    color: var(--bs-primary);
+}
+
+
+/*** Deliverables + add-ons + quote ***/
+.service-deliverables {
+    columns: 2 240px;
+    padding: 0;
+    list-style: none;
+}
+
+.service-deliverables li {
+    break-inside: avoid;
+    display: flex;
+    gap: 10px;
+    padding: 6px 0;
+    color: var(--bs-white);
+}
+
+.service-deliverables i {
+    margin-top: 5px;
+    font-size: 13px;
+    color: var(--bs-primary);
+}
+
+.service-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 24px;
+    margin-bottom: 1.5rem;
+}
+
+.service-meta span {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.service-meta i {
+    margin-right: 6px;
+    color: var(--bs-primary);
+}
+
+.addon-list {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0;
+    list-style: none;
+}
+
+.addon-list li {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+}
+
+.addon-list strong {
+    color: var(--bs-white);
+}
+
+.addon-list .price-stack .price-amount {
+    font-size: 1.1rem;
+}
+
+.quote-cta {
+    margin-top: 4rem;
+    text-align: center;
+}
+
+
+/*** Demo data tag ***/
+.package-sample {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    padding: 2px 10px;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--bs-body-color);
+    border: 1px dashed rgba(255, 255, 255, .25);
+    border-radius: 50px;
+}

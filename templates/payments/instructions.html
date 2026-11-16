@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}How to pay order {{ order.number }} | {{ site.brand_name }}{% endblock %}
+{% block extra_css %}<link href="{% static 'css/contact.css' %}" rel="stylesheet"><link href="{% static 'css/checkout.css' %}" rel="stylesheet">{% endblock %}
+
+{% block content %}
+<div class="contact-page checkout-page">
+    {% include "partials/_page_header.html" with title=config.display_name subtitle="Step 3 of 3: complete your payment" %}
+    <section class="container pb-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-7">
+                <div class="contact-form-card wow fadeInUp" data-wow-delay="0.1s">
+                    <h2 class="contact-form-title">Order {{ order.number }}</h2>
+                    <p class="order-big-total">Amount to pay <strong>{{ payment.display_amount }}</strong></p>
+                    <p>Please use <strong>{{ order.number }}</strong> as the payment reference.</p>
+                    {% if config.instructions %}
+                    <div class="payment-instructions">{{ config.instructions|linebreaks }}</div>
+                    {% else %}
+                    <p>Please <a href="{% url 'contact:index' %}">contact us</a> for the payment details.</p>
+                    {% endif %}
+                    <p class="small mb-4">Your order is confirmed once our team has checked that the money arrived. You will get an email, and the status changes in My Orders.</p>
+                    <a href="{{ order.get_absolute_url }}" class="btn btn-primary px-5 py-3 contact-btn">View order</a>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

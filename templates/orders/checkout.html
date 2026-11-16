@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% load static service_tags payment_tags %}
+
+{% block title %}Checkout: {{ package.name }} | {{ site.brand_name }}{% endblock %}
+{% block meta_description %}Order {{ package.name }} from {{ site.brand_name }}.{% endblock %}
+{% block extra_css %}<link href="{% static 'css/contact.css' %}" rel="stylesheet"><link href="{% static 'css/services.css' %}" rel="stylesheet"><link href="{% static 'css/checkout.css' %}" rel="stylesheet">{% endblock %}
+
+{% block content %}
+<div class="contact-page service-page checkout-page currency-scope" data-currency="{{ currency }}">
+    {% include "partials/_page_header.html" with title="Checkout" subtitle="Step 1 of 3: package and details" %}
+
+    <section class="container pb-5">
+        {% include "partials/_sandbox_banner.html" %}
+        <form method="post" novalidate data-contact-form>
+            {% csrf_token %}
+            <div class="row g-5">
+                <div class="col-lg-7">
+                    <div class="contact-form-card mb-4 wow fadeInUp" data-wow-delay="0.1s">
+                        <h2 class="contact-form-title">1. Currency</h2>
+                        <div class="checkout-currency" role="radiogroup" aria-label="Currency">
+                            {% for value, label in form.fields.currency.choices %}
+                            <label class="checkout-option">
+                                <input type="radio" name="currency" value="{{ value }}" data-set-currency="{{ value }}" {% if value == currency %}checked{% endif %}>
+                                <span><strong>{{ label }}</strong><small>{% if value == "bdt" %}Bangladesh pricing{% else %}International pricing{% endif %}</small></span>
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    {% if addons_by_currency.bdt or addons_by_currency.usd %}
+                    <div class="contact-form-card mb-4 wow fadeInUp" data-wow-delay="0.15s">
+                        <h2 class="contact-form-title">2. Optional add-ons</h2>
+                        {% if form.addons.errors %}<div class="invalid-feedback d-block mb-3">{{ form.addons.errors|join:" " }}</div>{% endif %}
+                        {% for cur, addons in addons_by_currency.items %}
+                        <div class="checkout-addons" data-addon-currency="{{ cur }}">
+                            {% for addon in addons %}
+                            <label class="checkout-option">
+                                <input type="checkbox" name="addons" value="{{ addon.pk }}" {% if cur != currency %}disabled{% endif %}
+                                    {% if cur == currency and addon.pk|stringformat:"s" in form.addons.value %}checked{% endif %}>
+                                <span><strong>{{ addon.name }}</strong>{% if addon.description %}<small>{{ addon.description }}</small>{% endif %}</span>
+                                <em>+ {% if cur == "bdt" %}{{ addon.display_bdt }}{% else %}{{ addon.display_usd }}{% endif %}</em>
+                            </label>
+                            {% empty %}
+                            <p class="mb-0 small">No add-ons are available in this currency.</p>
+                            {% endfor %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <div class="contact-form-card wow fadeInUp" data-wow-delay="0.2s">
+                        <h2 class="contact-form-title">{% if addons_by_currency.bdt or addons_by_currency.usd %}3{% else %}2{% endif %}. Your details</h2>
+                        <div class="row g-4">
+                            <div class="col-md-6">{% include "contact/partials/_field.html" with field=form.full_name %}</div>
+                            <div class="col-md-6">{% include "contact/partials/_field.html" with field=form.email %}</div>
+                            <div class="col-md-6">{% include "contact/partials/_field.html" with field=form.phone %}</div>
+                            <div class="col-md-6">{% include "contact/partials/_field.html" with field=form.company %}</div>
+                            <div class="col-md-6">{% include "contact/partials/_field.html" with field=form.country %}</div>
+                            <div class="col-12">{% include "contact/partials/_field.html" with field=form.notes %}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-5">
+                    <aside class="checkout-summary wow fadeInUp" data-wow-delay="0.2s" aria-label="Package summary">
+                        <span class="package-type">{% if package.is_combo %}Combo package{% else %}{{ package.service.title }}{% endif %}</span>
+                        <h2 class="package-name">{{ package.name }}</h2>
+                        {% if package.tagline %}<p>{{ package.tagline }}</p>{% endif %}
+                        <div class="package-price">
+                            {% include "service/partials/_price.html" with bdt=package.price_bdt usd=package.price_usd regular_bdt=package.regular_price_bdt regular_usd=package.regular_price_usd %}
+                            <div class="package-price-meta">
+                                <span>{% if package.is_monthly %}per month{% else %}one-time{% endif %}</span>
+                                {% if package.discount_text %}<span class="package-discount">{{ package.discount_text }}</span>{% endif %}
+                            </div>
+                        </div>
+                        {% if package.features.all %}
+                        <ul class="package-features">
+                            {% for feature in package.features.all %}{% if feature.is_included %}<li><i class="fa-solid fa-check" aria-hidden="true"></i><span>{{ feature.text }}</span></li>{% endif %}{% endfor %}
+                        </ul>
+                        {% endif %}
+                        {% if package.delivery_time %}<p class="package-delivery"><i class="fa-regular fa-clock me-2"></i>{{ package.delivery_time }}</p>{% endif %}
+                        <p class="small">You will see the full total, with add-ons, on the next step before paying.</p>
+                        <button type="submit" class="btn btn-primary w-100 py-3 contact-btn" data-submit-text="Saving...">Continue to review <i class="fa-solid fa-arrow-right ms-1"></i></button>
+                        <p class="checkout-secure"><i class="fa-solid fa-lock me-2" aria-hidden="true"></i>You pay on the payment provider's own page. We never see or store card details.</p>
+                        {% accepted_payments "checkout" %}
+                    </aside>
+                </div>
+            </div>
+        </form>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}<script src="{% static 'js/contact.js' %}"></script><script src="{% static 'js/services.js' %}"></script><script src="{% static 'js/checkout.js' %}"></script>{% endblock %}

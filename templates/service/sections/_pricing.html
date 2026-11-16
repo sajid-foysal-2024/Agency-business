@@ -1,0 +1,65 @@
+{% load payment_tags %}{# Pricing: currency switch + single packages + combo packages #}
+<section class="container-fluid py-5" id="pricing">
+    <div class="container py-5">
+        <div class="text-center">
+            {% include "partials/_section_title.html" with subtitle="Pricing" title="Choose Your Package" %}
+            {% if single_packages or combo_packages or addons %}
+            {% include "service/partials/_currency_switch.html" %}
+            {% accepted_payments "pricing" %}
+            {% endif %}
+        </div>
+
+        {% if single_packages %}
+        <div class="pricing-group" id="packages">
+            <h3 class="pricing-group-title wow fadeInUp" data-wow-delay="0.1s">{{ service.title }} Packages</h3>
+            <div class="row g-4 justify-content-center">
+                {% for package in single_packages %}
+                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="{% cycle '0.1s' '0.25s' '0.4s' %}">
+                    {% include "service/partials/_package_card.html" %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if combo_packages %}
+        <div class="pricing-group" id="combos">
+            <h3 class="pricing-group-title wow fadeInUp" data-wow-delay="0.1s">Combo Packages</h3>
+            <p class="text-center mb-5 wow fadeInUp" data-wow-delay="0.15s">Get more done together: these combos include {{ service.title }}.</p>
+            <div class="row g-4 justify-content-center">
+                {% for package in combo_packages %}
+                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="{% cycle '0.1s' '0.25s' '0.4s' %}">
+                    {% include "service/partials/_package_card.html" %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if addons %}
+        <div class="pricing-group" id="addons">
+            <h3 class="pricing-group-title wow fadeInUp" data-wow-delay="0.1s">Optional Add-ons</h3>
+            <ul class="addon-list wow fadeInUp" data-wow-delay="0.15s">
+                {% for addon in addons %}
+                <li>
+                    <span><strong>{{ addon.name }}</strong>{% if addon.description %}<br><small>{{ addon.description }}</small>{% endif %}</span>
+                    {% include "service/partials/_price.html" with bdt=addon.price_bdt usd=addon.price_usd empty_text="On request" %}
+                </li>
+                {% endfor %}
+            </ul>
+            <p class="text-center small mt-3 mb-0">Pick add-ons at checkout.</p>
+        </div>
+        {% endif %}
+
+        {% if service.allow_custom_quote %}
+        <div class="quote-cta wow fadeInUp" data-wow-delay="0.1s">
+            <p class="mb-3">Need something different? Tell us about your project and we will price it for you.</p>
+            <a href="{% url 'orders:quote' %}?service={{ service.slug }}" class="btn btn-outline-primary border-2 py-3 px-5 service-btn">Request a Custom Quote</a>
+        </div>
+        {% endif %}
+
+        {% if not single_packages and not combo_packages %}
+        <p class="text-center fs-5 mb-0 wow fadeInUp">Packages for this service are coming soon. Contact us for a custom quote.</p>
+        {% endif %}
+    </div>
+</section>

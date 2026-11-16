@@ -1,0 +1,25 @@
+{# Order lines and totals. Param: order #}
+<div class="table-responsive">
+<table class="table order-table mb-0">
+    <thead>
+        <tr><th scope="col">Item</th><th scope="col" class="text-end">Amount ({{ order.currency_code }})</th></tr>
+    </thead>
+    <tbody>
+        {% for item in order.items.all %}
+        <tr>
+            <td>{{ item.name }}{% if item.billing_type == "monthly" %} <span class="order-tag">1 month</span>{% endif %}</td>
+            <td class="text-end">{{ item.display_line_total }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    <tfoot>
+        <tr><td>Subtotal</td><td class="text-end">{{ order.display_subtotal }}</td></tr>
+        {% if order.discount %}<tr><td>Discount{% if order.coupon_code %} ({{ order.coupon_code }}){% endif %}</td><td class="text-end">- {{ order.display_discount }}</td></tr>{% endif %}
+        {% if order.tax %}<tr><td>Tax</td><td class="text-end">{{ order.display_tax }}</td></tr>{% endif %}
+        <tr class="order-total"><td>Total</td><td class="text-end">{{ order.display_total }}</td></tr>
+    </tfoot>
+</table>
+</div>
+{% if order.has_monthly_items %}
+<p class="small mt-3 mb-0">Monthly plans are billed one month at a time. Next month is a new invoice; nothing renews automatically.</p>
+{% endif %}

@@ -1,0 +1,20 @@
+{# "We accept" strip. Shows only brands of payment methods that are enabled. #}
+{% if international or bangladesh %}
+<div class="pay-accepted pay-accepted-{{ variant }}" aria-label="Accepted payment methods">
+    {% if variant == "footer" %}<h5 class="text-uppercase text-white footer-heading mb-4">We Accept</h5>{% endif %}
+    <div class="pay-groups">
+        {% if international %}
+        <div class="pay-group">
+            <span class="pay-group-label"><i class="fa-solid fa-globe me-2" aria-hidden="true"></i>International</span>
+            <div class="pay-brands">{% for brand in international %}{% include "payments/partials/_brand.html" %}{% endfor %}</div>
+        </div>
+        {% endif %}
+        {% if bangladesh %}
+        <div class="pay-group">
+            <span class="pay-group-label"><i class="fa-solid fa-location-dot me-2" aria-hidden="true"></i>Bangladesh</span>
+            <div class="pay-brands">{% for brand in bangladesh %}{% include "payments/partials/_brand.html" %}{% endfor %}</div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endif %}

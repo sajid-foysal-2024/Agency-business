@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Review order {{ order.number }} | {{ site.brand_name }}{% endblock %}
+{% block extra_css %}<link href="{% static 'css/contact.css' %}" rel="stylesheet"><link href="{% static 'css/checkout.css' %}" rel="stylesheet">{% endblock %}
+
+{% block content %}
+<div class="contact-page checkout-page">
+    {% include "partials/_page_header.html" with title="Review and pay" subtitle="Step 2 of 3: check your order and choose how to pay" %}
+
+    <section class="container pb-5">
+        {% include "partials/_sandbox_banner.html" %}
+        <div class="row g-5">
+            <div class="col-lg-7 wow fadeInUp" data-wow-delay="0.1s">
+                <div class="contact-form-card">
+                    <h2 class="contact-form-title">Order {{ order.number }}</h2>
+                    {% include "orders/partials/_summary.html" %}
+                    <dl class="order-contact mt-4 mb-0">
+                        <dt>Name</dt><dd>{{ order.full_name }}</dd>
+                        <dt>Email</dt><dd>{{ order.email }}</dd>
+                        {% if order.phone %}<dt>Phone</dt><dd>{{ order.phone }}</dd>{% endif %}
+                        {% if order.company %}<dt>Company</dt><dd>{{ order.company }}</dd>{% endif %}
+                        {% if order.notes %}<dt>Notes</dt><dd>{{ order.notes|linebreaksbr }}</dd>{% endif %}
+                    </dl>
+                </div>
+            </div>
+
+            <div class="col-lg-5 wow fadeInUp" data-wow-delay="0.2s">
+                <aside class="checkout-summary" aria-label="Payment method">
+                    <div class="coupon-box">
+                        {% if order.coupon_code %}
+                        <form method="post" action="{% url 'orders:coupon' order.number %}" class="coupon-applied">
+                            {% csrf_token %}
+                            <span><i class="fa-solid fa-tag me-2" aria-hidden="true"></i><strong>{{ order.coupon_code }}</strong> applied, - {{ order.display_discount }}</span>
+                            <button type="submit" name="action" value="remove" class="btn btn-link btn-sm text-body">Remove</button>
+                        </form>
+                        {% else %}
+                        <form method="post" action="{% url 'orders:coupon' order.number %}" class="coupon-form">
+                            {% csrf_token %}
+                            <label for="coupon-code" class="form-label">Have a coupon?</label>
+                            <div class="coupon-row">
+                                <input type="text" id="coupon-code" name="code" class="form-control contact-input" placeholder="Coupon code" autocomplete="off" maxlength="30" required>
+                                <button type="submit" name="action" value="apply" class="btn btn-outline-primary border-2 px-4">Apply</button>
+                            </div>
+                        </form>
+                        {% endif %}
+                    </div>
+
+                    <h2 class="package-name">Payment method</h2>
+                    {% if methods %}
+                    <form method="post" novalidate data-contact-form>
+                        {% csrf_token %}
+                        <fieldset class="checkout-methods">
+                            <legend class="visually-hidden">Choose a payment method</legend>
+                            {% for config, provider in methods %}
+                            <label class="checkout-option">
+                                <input type="radio" name="method" value="{{ config.code }}" required {% if forloop.first %}checked{% endif %}>
+                                <span>
+                                    <strong>{{ config.display_name }}{% if config.code == "demo" %} <span class="order-tag">DEMO</span>{% endif %}</strong>
+                                    {% if config.description %}<small>{{ config.description }}</small>{% endif %}
+                                    {% if config.brands.all %}<span class="pay-brands pay-brands-inline">{% for brand in config.brands.all %}{% if brand.is_active %}{% include "payments/partials/_brand.html" %}{% endif %}{% endfor %}</span>{% endif %}
+                                </span>
+                            </label>
+                            {% endfor %}
+                        </fieldset>
+                        <p class="order-big-total">Total <strong>{{ order.display_total }}</strong></p>
+                        <button type="submit" class="btn btn-primary w-100 py-3 contact-btn" data-submit-text="Starting payment...">
+                            <i class="fa-solid fa-lock me-2" aria-hidden="true"></i>Pay {{ order.display_total }}
+                        </button>
+                    </form>
+                    {% else %}
+                    <p>No online payment method is available for {{ order.currency_code }} right now.</p>
+                    <a href="{% url 'contact:index' %}" class="btn btn-outline-primary border-2 w-100 py-3">Contact us to pay</a>
+                    {% endif %}
+                    <p class="checkout-secure"><i class="fa-solid fa-lock me-2" aria-hidden="true"></i>Card and wallet details are entered on the provider's page, never on this website.</p>
+                    <form method="post" action="{% url 'orders:cancel' order.number %}" class="text-center mt-3">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-link btn-sm text-body">Cancel this order</button>
+                    </form>
+                </aside>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}<script src="{% static 'js/contact.js' %}"></script>{% endblock %}

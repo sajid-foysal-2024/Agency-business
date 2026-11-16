@@ -1,0 +1,76 @@
+{# One pricing card (single or combo). Params: package, show_service (bool) #}
+<article class="package-card h-100{% if package.is_popular %} is-popular{% endif %}">
+    {% if package.is_popular %}<span class="package-badge">Popular</span>{% endif %}
+    {% if package.is_demo %}<span class="package-sample" title="Sample package for preview">Sample</span>{% endif %}
+
+    <header class="package-header">
+        <span class="package-type">
+            {% if package.is_combo %}Combo Package{% elif show_service %}{{ package.service.title }}{% else %}Package{% endif %}
+        </span>
+        <h3 class="package-name">{{ package.name }}</h3>
+        {% if package.tagline %}<p class="package-tagline mb-0">{{ package.tagline }}</p>{% endif %}
+    </header>
+
+    {% if package.is_combo and package.included_services.all %}
+    <div class="package-includes">
+        {% for included in package.included_services.all %}
+        <a href="{{ included.get_absolute_url }}">{{ included.title }}</a>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="package-price">
+        {% include "service/partials/_price.html" with bdt=package.price_bdt usd=package.price_usd regular_bdt=package.regular_price_bdt regular_usd=package.regular_price_usd %}
+        {% if package.price_note or package.discount_text %}
+        <div class="package-price-meta">
+            {% if package.price_note %}<span>{{ package.price_note }}</span>{% endif %}
+            {% if package.discount_text %}<span class="package-discount">{{ package.discount_text }}</span>{% endif %}
+        </div>
+        {% endif %}
+    </div>
+
+    {% if package.features.all %}
+    <ul class="package-features">
+        {% for feature in package.features.all %}
+        <li class="{% if not feature.is_included %}is-excluded{% endif %}">
+            <i class="fa-solid {% if feature.is_included %}fa-check{% else %}fa-xmark{% endif %}" aria-hidden="true"></i>
+            <span>{{ feature.text }}</span>
+            {% if not feature.is_included %}<span class="visually-hidden">(not included)</span>{% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <footer class="package-footer">
+        {% if package.delivery_time %}
+        <p class="package-delivery"><i class="fa-regular fa-clock me-2"></i>{{ package.delivery_time }}</p>
+        {% endif %}
+        {% url 'orders:checkout' package.pk as checkout_url %}
+        {% url 'orders:quote' as quote_url %}
+        {% with btn_class=package.is_popular|yesno:"btn-primary,btn-outline-primary border-2" %}
+        {# One button per currency; CSS shows the one for the selected currency #}
+        <div data-only="bdt">
+            {% if package.price_bdt is not None %}
+            <a class="btn {{ btn_class }} w-100 py-3 package-btn" href="{{ checkout_url }}?currency=bdt"
+                aria-label="{{ package.button_text|default:'Order Now' }}: {{ package.name }} in BDT">{{ package.button_text|default:"Order Now" }}</a>
+            {% else %}
+            <a class="btn btn-outline-primary border-2 w-100 py-3 package-btn" href="{{ quote_url }}{% if package.service %}?service={{ package.service.slug }}{% endif %}">Request a Quote</a>
+            {% endif %}
+        </div>
+        <div data-only="usd">
+            {% if package.price_usd is not None %}
+            <a class="btn {{ btn_class }} w-100 py-3 package-btn" href="{{ checkout_url }}?currency=usd"
+                aria-label="{{ package.button_text|default:'Order Now' }}: {{ package.name }} in USD">{{ package.button_text|default:"Order Now" }}</a>
+            {% else %}
+            <a class="btn btn-outline-primary border-2 w-100 py-3 package-btn" href="{{ quote_url }}{% if package.service %}?service={{ package.service.slug }}{% endif %}">Request a Quote</a>
+            {% endif %}
+        </div>
+        {% endwith %}
+        {% if package.wa_bdt %}
+        <a class="package-wa-link js-whatsapp-link" href="{{ package.wa_bdt }}" data-href-bdt="{{ package.wa_bdt }}"
+            data-href-usd="{{ package.wa_usd }}" target="_blank" rel="noopener">
+            <i class="fa-brands fa-whatsapp me-1" aria-hidden="true"></i>Discuss on WhatsApp
+        </a>
+        {% endif %}
+    </footer>
+</article>

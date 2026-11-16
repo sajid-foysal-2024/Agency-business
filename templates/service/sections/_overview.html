@@ -1,0 +1,29 @@
+{% if service.overview or service.deliverable_list %}
+<section class="container-fluid py-5" id="overview">
+    <div class="container py-5">
+        <div class="row g-5 align-items-center">
+            <div class="{% if service.image %}col-lg-7{% else %}col-lg-10 mx-auto{% endif %}">
+                {% include "partials/_section_title.html" with subtitle="Overview" title=service.overview_title|default:"Service Overview" align="left" %}
+                <div class="service-overview-text wow fadeInUp" data-wow-delay="0.2s">
+                    {% for paragraph in service.overview_paragraphs %}
+                    <p>{{ paragraph|linebreaksbr }}</p>
+                    {% endfor %}
+                </div>
+                {% if service.deliverable_list %}
+                <h3 class="pricing-group-title text-start mt-4 wow fadeInUp" data-wow-delay="0.25s">Deliverables</h3>
+                <ul class="service-deliverables wow fadeInUp" data-wow-delay="0.3s">
+                    {% for item in service.deliverable_list %}<li><i class="fa-solid fa-check" aria-hidden="true"></i><span>{{ item }}</span></li>{% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+            {% if service.image %}
+            <div class="col-lg-5 wow fadeInUp" data-wow-delay="0.3s">
+                <div class="service-zoom">
+                    <img class="img-fluid w-100" src="{{ service.image.url }}" alt="{{ service.title }}" loading="lazy">
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endif %}

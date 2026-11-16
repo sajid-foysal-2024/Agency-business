@@ -1,0 +1,79 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>Invoice {{ invoice.number }} | {{ site.brand_name }}</title>
+    <link href="{% static 'css/invoice.css' %}" rel="stylesheet">
+</head>
+<body>
+    <div class="invoice-actions no-print">
+        <a href="{{ order.get_absolute_url }}">&larr; Back to order</a>
+        <button type="button" onclick="window.print()">Download / Print PDF</button>
+    </div>
+
+    <main class="invoice">
+        {% if paid_payment.is_sandbox %}<p class="invoice-demo">DEMO: this invoice belongs to a test payment. No real money was charged.</p>{% endif %}
+
+        <header class="invoice-header">
+            <div>
+                {% if site.logo %}<img src="{{ site.logo.url }}" alt="{{ site.brand_name }}" class="invoice-logo">{% else %}<h1 class="invoice-brand">{{ site.brand_name }}</h1>{% endif %}
+                {% if site.address %}<p>{{ site.address }}</p>{% endif %}
+                {% if site.email %}<p>{{ site.email }}</p>{% endif %}
+                {% if site.phone %}<p>{{ site.phone }}</p>{% endif %}
+            </div>
+            <div class="invoice-meta">
+                <h2>INVOICE</h2>
+                <table>
+                    <tr><th>Invoice no.</th><td>{{ invoice.number }}</td></tr>
+                    <tr><th>Order no.</th><td>{{ order.number }}</td></tr>
+                    <tr><th>Issue date</th><td>{{ invoice.issue_date|date:"d M Y" }}</td></tr>
+                    <tr><th>Due date</th><td>{{ invoice.due_date|date:"d M Y" }}</td></tr>
+                    <tr><th>Currency</th><td>{{ order.currency_code }}</td></tr>
+                    <tr><th>Status</th><td><span class="invoice-status invoice-status-{{ invoice.status }}">{{ invoice.get_status_display }}</span></td></tr>
+                </table>
+            </div>
+        </header>
+
+        <section class="invoice-bill-to">
+            <h3>Bill to</h3>
+            <p><strong>{{ order.full_name }}</strong></p>
+            {% if order.company %}<p>{{ order.company }}</p>{% endif %}
+            <p>{{ order.email }}</p>
+            {% if order.phone %}<p>{{ order.phone }}</p>{% endif %}
+            {% if order.country %}<p>{{ order.country }}</p>{% endif %}
+        </section>
+
+        <table class="invoice-lines">
+            <thead><tr><th>Description</th><th>Billing</th><th class="num">Qty</th><th class="num">Unit price</th><th class="num">Amount</th></tr></thead>
+            <tbody>
+                {% for item in order.items.all %}
+                <tr>
+                    <td>{{ item.name }}</td>
+                    <td>{% if item.billing_type == "monthly" %}1 month{% else %}One-time{% endif %}</td>
+                    <td class="num">{{ item.quantity }}</td>
+                    <td class="num">{{ item.unit_price|floatformat:"2g" }}</td>
+                    <td class="num">{{ item.display_line_total }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr><td colspan="4">Subtotal</td><td class="num">{{ order.display_subtotal }}</td></tr>
+                {% if order.discount %}<tr><td colspan="4">Discount{% if order.coupon_code %} ({{ order.coupon_code }}){% endif %}</td><td class="num">- {{ order.display_discount }}</td></tr>{% endif %}
+                {% if order.tax %}<tr><td colspan="4">Tax</td><td class="num">{{ order.display_tax }}</td></tr>{% endif %}
+                <tr class="invoice-total"><td colspan="4">Total ({{ order.currency_code }})</td><td class="num">{{ order.display_total }}</td></tr>
+            </tfoot>
+        </table>
+
+        {% if paid_payment %}
+        <p class="invoice-paid">Paid on {{ order.paid_at|date:"d M Y" }} by {{ paid_payment.provider|capfirst }}, reference {{ paid_payment.reference }}.</p>
+        {% endif %}
+
+        <footer class="invoice-footer">
+            <p>Thank you for your business.</p>
+            <p>{{ site.brand_name }}{% if site.address %} &middot; {{ site.address }}{% endif %}</p>
+        </footer>
+    </main>
+</body>
+</html>

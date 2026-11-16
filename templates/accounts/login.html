@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Log in | {{ site.brand_name }}{% endblock %}
+{% block meta_description %}Log in to see your orders, payments and invoices.{% endblock %}
+{% block extra_css %}<link href="{% static 'css/contact.css' %}" rel="stylesheet"><link href="{% static 'css/checkout.css' %}" rel="stylesheet">{% endblock %}
+
+{% block content %}
+<div class="contact-page checkout-page">
+    {% include "partials/_page_header.html" with title="Log in" %}
+    <section class="container pb-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-8">
+                <div class="contact-form-card wow fadeInUp" data-wow-delay="0.1s">
+                    <h2 class="contact-form-title">Welcome back</h2>
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ next }}">
+                        {% if form.non_field_errors %}<div class="alert alert-danger" role="alert">{{ form.non_field_errors|join:" " }}</div>{% endif %}
+                        <div class="mb-4">{% include "contact/partials/_field.html" with field=form.username %}</div>
+                        <div class="mb-4">{% include "contact/partials/_field.html" with field=form.password %}</div>
+                        <button type="submit" class="btn btn-primary w-100 py-3 contact-btn">Log in</button>
+                    </form>
+                    <p class="mt-4 mb-0 text-center">New here? <a href="{% url 'accounts:signup' %}{% if next %}?next={{ next|urlencode }}{% endif %}">Create an account</a></p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Request a Custom Quote | {{ site.brand_name }}{% endblock %}
+{% block meta_description %}Tell {{ site.brand_name }} about your project and get a custom quote in BDT or USD.{% endblock %}
+{% block extra_css %}<link href="{% static 'css/contact.css' %}" rel="stylesheet">{% endblock %}
+
+{% block content %}
+<div class="contact-page">
+    {% include "partials/_page_header.html" with title="Custom Quote" subtitle="Tell us what you need. We reply with a price." %}
+    <section class="container pb-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="contact-form-card wow fadeInUp" data-wow-delay="0.1s">
+                    <h2 class="contact-form-title">Project brief</h2>
+                    <form method="post" novalidate data-contact-form>
+                        {% csrf_token %}
+                        <div class="row g-4">
+                            <div class="col-md-6">{% include "contact/partials/_field.html" with field=form.full_name %}</div>
+                            <div class="col-md-6">{% include "contact/partials/_field.html" with field=form.email %}</div>
+                            <div class="col-md-6">{% include "contact/partials/_field.html" with field=form.phone %}</div>
+                            <div class="col-md-6">{% include "contact/partials/_field.html" with field=form.service %}</div>
+                            <div class="col-md-6">{% include "contact/partials/_field.html" with field=form.currency %}</div>
+                            <div class="col-md-6">{% include "contact/partials/_field.html" with field=form.budget %}</div>
+                            <div class="col-12">{% include "contact/partials/_field.html" with field=form.brief %}</div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 py-3 mt-4 contact-btn" data-submit-text="Sending...">Request a Quote</button>
+                    </form>
+                    {% if not user.is_authenticated %}
+                    <p class="small mt-4 mb-0"><a href="{% url 'accounts:signup' %}">Create an account</a> to pay the quote online once we send it.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}<script src="{% static 'js/contact.js' %}"></script>{% endblock %}

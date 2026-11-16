@@ -1,0 +1,25 @@
+{# Service card for the services list. Param: service (with from_price_bdt / from_price_usd) #}
+<article class="service-card h-100">
+    <a href="{{ service.get_absolute_url }}" class="service-card-img service-zoom d-block" tabindex="-1" aria-hidden="true">
+        {% if service.image %}
+        <img src="{{ service.image.url }}" alt="" loading="lazy">
+        {% else %}
+        <div class="service-card-icon"><i class="{{ service.icon|default:'fa-solid fa-layer-group' }}"></i></div>
+        {% endif %}
+    </a>
+    <div class="service-card-body">
+        <h3 class="text-uppercase"><a href="{{ service.get_absolute_url }}">{{ service.title }}</a></h3>
+        <p>{{ service.description|truncatewords:22 }}</p>
+        <div class="service-card-footer">
+            {% if service.from_price_bdt is not None or service.from_price_usd is not None %}
+            <div class="service-card-price">
+                <span>Starting from</span>
+                {% include "service/partials/_price.html" with bdt=service.from_price_bdt usd=service.from_price_usd empty_text="On request" %}
+            </div>
+            {% endif %}
+            <a href="{{ service.get_absolute_url }}" class="btn btn-outline-primary border-2 px-4 service-btn">
+                View Details <i class="fa-solid fa-arrow-right ms-1" aria-hidden="true"></i>
+            </a>
+        </div>
+    </div>
+</article>

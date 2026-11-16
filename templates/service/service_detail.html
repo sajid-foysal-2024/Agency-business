@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ service.meta_title|default:service.title|title }} | {{ site.brand_name }}{% endblock %}
+{% block og_title %}{{ service.meta_title|default:service.title|title }} | {{ site.brand_name }}{% endblock %}
+{% block meta_description %}{{ service.meta_description|default:service.description|truncatewords:30 }}{% endblock %}
+{% block extra_css %}<link href="{% static 'css/services.css' %}" rel="stylesheet">{% endblock %}
+
+{% block content %}
+<div class="service-page currency-scope" data-currency="bdt">
+    {% include "service/sections/_hero.html" %}
+    {% include "service/sections/_overview.html" %}
+    {% include "service/sections/_offerings.html" %}
+    {% include "service/sections/_pricing.html" %}
+    {% include "service/sections/_faq.html" %}
+    {% include "service/sections/_whatsapp_cta.html" %}
+</div>
+{% endblock %}
+
+{% block extra_js %}<script src="{% static 'js/services.js' %}"></script>{% endblock %}

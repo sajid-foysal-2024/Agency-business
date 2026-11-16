@@ -3,7 +3,9 @@ from django.urls import reverse
 
 from developers.models import Developer
 
-from .models import HomePage, Service, SiteSetting, Subscriber
+from service.models import Service
+
+from .models import HomePage, SiteSetting, Subscriber
 
 
 class HomePageTests(TestCase):

@@ -17,6 +17,22 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+def load_env_file(path):
+    """Read KEY=VALUE lines from a local .env file into os.environ (real env vars win)."""
+    if not path.exists():
+        return
+    for line in path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        os.environ.setdefault(key.strip(), value.strip().strip('"').strip("'"))
+
+
+# Secrets (email password etc.) live in .env next to manage.py. It is git-ignored.
+load_env_file(BASE_DIR / ".env")
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
@@ -45,6 +61,11 @@ INSTALLED_APPS = [
     'core',
     'home',
     'developers',
+    'service',
+    'contact',
+    'accounts',
+    'orders',
+    'payments',
 ]
 
 MIDDLEWARE = [
@@ -70,6 +91,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'home.context_processors.site_settings',
+                'payments.context_processors.payment_mode',
             ],
         },
     },
@@ -134,13 +156,64 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
 
-MAILERS = {
-    'default': {
-        'BACKEND': 'django.core.mail.backends.console.EmailBackend',
-    },
-}
+# Gmail SMTP is used when EMAIL_HOST_USER and EMAIL_HOST_PASSWORD are set in .env.
+# Otherwise emails are only printed in the terminal (console backend).
+_email_user = os.environ.get("EMAIL_HOST_USER", "")
+_email_password = os.environ.get("EMAIL_HOST_PASSWORD", "")
+
+if _email_user and _email_password:
+    MAILERS = {
+        'default': {
+            'BACKEND': 'django.core.mail.backends.smtp.EmailBackend',
+            'OPTIONS': {
+                'host': os.environ.get("EMAIL_HOST", "smtp.gmail.com"),
+                'port': int(os.environ.get("EMAIL_PORT", "587")),
+                'username': _email_user,
+                'password': _email_password,
+                'use_tls': True,
+                'timeout': 20,
+            },
+        },
+    }
+    DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", f"OS Agency <{_email_user}>")
+else:
+    MAILERS = {
+        'default': {
+            'BACKEND': 'django.core.mail.backends.console.EmailBackend',
+        },
+    }
+    DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "webmaster@localhost")
+
+# Don't keep the raw values around as settings
+del _email_user, _email_password
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+
+# ---------------------------------------------------------------------------
+# Customer accounts
+# ---------------------------------------------------------------------------
+LOGIN_URL = "accounts:login"
+LOGIN_REDIRECT_URL = "orders:dashboard"
+LOGOUT_REDIRECT_URL = "home:index"
+
+
+# ---------------------------------------------------------------------------
+# Payments
+# sandbox = test only: the Demo provider is on and nothing real is charged.
+# live    = real payments: needs approved merchant credentials in .env.
+# ---------------------------------------------------------------------------
+PAYMENT_MODE = os.environ.get("PAYMENT_MODE", "sandbox").strip().lower()
+
+# Public address of this site, used for payment return and IPN URLs.
+SITE_URL = os.environ.get("SITE_URL", "http://127.0.0.1:8000").rstrip("/")
+
+# SSLCOMMERZ: credentials come only from the environment, never from code or the database.
+SSLCOMMERZ_STORE_ID = os.environ.get("SSLCOMMERZ_STORE_ID", "")
+SSLCOMMERZ_STORE_PASSWORD = os.environ.get("SSLCOMMERZ_STORE_PASSWORD", "")
+
+INVOICE_DUE_DAYS = int(os.environ.get("INVOICE_DUE_DAYS", "7"))
+

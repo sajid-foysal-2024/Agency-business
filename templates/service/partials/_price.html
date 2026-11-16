@@ -1,0 +1,20 @@
+{% load service_tags %}
+{# Both currencies stacked; CSS shows the selected one. Params: bdt, usd, regular_bdt, regular_usd, empty_text #}
+<div class="price-stack">
+    <div class="price-line" data-price-currency="bdt">
+        {% if bdt is not None %}
+        <span class="price-amount">{{ bdt|price:"bdt" }}</span>
+        {% if regular_bdt %}<del class="price-regular">{{ regular_bdt|price:"bdt" }}</del>{% endif %}
+        {% else %}
+        <span class="price-request">{{ empty_text|default:"Price on request" }}</span>
+        {% endif %}
+    </div>
+    <div class="price-line" data-price-currency="usd">
+        {% if usd is not None %}
+        <span class="price-amount">{{ usd|price:"usd" }}</span>
+        {% if regular_usd %}<del class="price-regular">{{ regular_usd|price:"usd" }}</del>{% endif %}
+        {% else %}
+        <span class="price-request">{{ empty_text|default:"Price on request" }}</span>
+        {% endif %}
+    </div>
+</div>

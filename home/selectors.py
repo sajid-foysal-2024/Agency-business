@@ -8,8 +8,10 @@ from django.utils import timezone
 from developers.models import ClientReview, Developer, Project
 from developers.selectors import get_home_page_developers
 
+from service.selectors import get_active_services
+
 from .models import (About, ClientLogo, Feature, HeroSlide, HomePage, ProcessStep,
-                     Service, SiteSetting, Stat, Testimonial)
+                     SiteSetting, Stat, Testimonial)
 
 
 def get_active_slides():
@@ -18,10 +20,6 @@ def get_active_slides():
 
 def get_about():
     return About.objects.prefetch_related("points").filter(pk=1, is_active=True).first()
-
-
-def get_active_services():
-    return Service.objects.filter(is_active=True)
 
 
 def get_active_testimonials():

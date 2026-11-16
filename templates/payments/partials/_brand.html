@@ -1,0 +1,10 @@
+{# One payment brand: uploaded logo, else icon, else the name. Param: brand #}
+<span class="pay-brand" title="{{ brand.name }}">
+    {% if brand.logo %}
+    <img src="{{ brand.logo.url }}" alt="{{ brand.name }}" loading="lazy">
+    {% elif brand.icon %}
+    <i class="{{ brand.icon }}" aria-hidden="true"></i><span class="visually-hidden">{{ brand.name }}</span>
+    {% else %}
+    <span class="pay-brand-name">{{ brand.name }}</span>
+    {% endif %}
+</span>

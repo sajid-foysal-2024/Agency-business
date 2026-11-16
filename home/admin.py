@@ -3,7 +3,7 @@ from django.contrib import admin
 from core.admin_utils import OrderedAdmin, SingletonAdmin, image_preview
 
 from .models import (About, AboutPoint, ClientLogo, Feature, HeroSlide, HomePage,
-                     ProcessStep, Service, SiteSetting, Stat, Subscriber, Testimonial)
+                     ProcessStep, SiteSetting, Stat, Subscriber, Testimonial)
 
 admin.site.site_header = "Agency Admin"
 admin.site.site_title = "Agency Admin"
@@ -20,9 +20,13 @@ class SiteSettingAdmin(SingletonAdmin):
         ("Branding", {"fields": ("brand_name", "tagline", "brand_icon", "logo", "favicon", "founded_year")}),
         ("Header button", {"fields": ("header_button_text", "header_button_link")}),
         ("SEO", {"fields": ("meta_description", "meta_keywords")}),
-        ("Contact", {"fields": ("email", "phone", "address")}),
+        ("Contact", {"fields": ("email", "phone", "whatsapp_number", "office_label", "address")}),
+        ("Notifications", {
+            "fields": ("notification_email",),
+            "description": "Where Contact form messages are sent. Only visible here in the admin.",
+        }),
         ("Social links", {
-            "fields": ("facebook_url", "x_url", "instagram_url", "linkedin_url", "youtube_url"),
+            "fields": ("facebook_url", "x_url", "instagram_url", "linkedin_url", "github_url", "youtube_url"),
             "description": "Leave a link blank to hide its icon.",
         }),
         ("Footer", {"fields": ("about_short", "copyright_name")}),
@@ -37,7 +41,10 @@ class HomePageAdmin(SingletonAdmin):
             "fields": ("show_stats",),
             "description": "Add the counters themselves under Home > Stats.",
         }),
-        ("Services section", {"fields": ("services_subtitle", "services_title")}),
+        ("Services section", {
+            "fields": ("services_subtitle", "services_title"),
+            "description": "The services themselves are managed under Service > Services.",
+        }),
         ("Why choose us section", {"fields": ("features_subtitle", "features_title", "features_text")}),
         ("Recent works section", {
             "fields": ("works_subtitle", "works_title", "works_limit"),
@@ -87,12 +94,6 @@ class AboutAdmin(SingletonAdmin):
 class HeroSlideAdmin(OrderedAdmin):
     list_display = ("title", image_preview("image"), "subtitle", "order", "is_active")
     search_fields = ("title", "subtitle")
-
-
-@admin.register(Service)
-class ServiceAdmin(OrderedAdmin):
-    list_display = ("title", image_preview("image"), "order", "is_active")
-    search_fields = ("title", "description")
 
 
 @admin.register(Stat)

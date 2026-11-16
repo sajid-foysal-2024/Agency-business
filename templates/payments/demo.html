@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}DEMO payment | {{ site.brand_name }}{% endblock %}
+{% block extra_css %}<link href="{% static 'css/contact.css' %}" rel="stylesheet"><link href="{% static 'css/checkout.css' %}" rel="stylesheet">{% endblock %}
+
+{% block content %}
+<div class="contact-page checkout-page">
+    {% include "partials/_page_header.html" with title="DEMO payment" subtitle="Step 3 of 3: test the payment result" %}
+    <section class="container pb-5">
+        {% include "partials/_sandbox_banner.html" %}
+        <div class="row justify-content-center">
+            <div class="col-lg-7">
+                <div class="contact-form-card demo-card wow fadeInUp" data-wow-delay="0.1s">
+                    <span class="demo-label">DEMO PROVIDER &middot; NOT A REAL PAYMENT</span>
+                    <h2 class="contact-form-title mt-3">Order {{ order.number }}</h2>
+                    <p class="order-big-total">Amount <strong>{{ payment.display_amount }}</strong></p>
+                    <p>This page stands in for a payment provider. Pick an outcome. The site then receives a signed test webhook and updates the order, exactly like a real provider callback.</p>
+
+                    {% if payment.status == "pending" or payment.status == "initiated" %}
+                    <form method="post" class="demo-outcomes">
+                        {% csrf_token %}
+                        <button type="submit" name="outcome" value="success" class="btn btn-primary py-3 contact-btn"><i class="fa-solid fa-check me-2"></i>Simulate success</button>
+                        <button type="submit" name="outcome" value="failure" class="btn btn-outline-primary border-2 py-3 contact-btn"><i class="fa-solid fa-xmark me-2"></i>Simulate failure</button>
+                        <button type="submit" name="outcome" value="cancel" class="btn btn-outline-primary border-2 py-3 contact-btn"><i class="fa-solid fa-ban me-2"></i>Simulate cancellation</button>
+                        <button type="submit" name="outcome" value="pending" class="btn btn-outline-primary border-2 py-3 contact-btn"><i class="fa-solid fa-hourglass-half me-2"></i>Leave pending</button>
+                    </form>
+                    {% else %}
+                    <p>This test payment is already <strong>{{ payment.get_status_display|lower }}</strong>.</p>
+                    {% endif %}
+                    <a href="{{ order.get_absolute_url }}" class="btn btn-link text-body mt-3">Back to order</a>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

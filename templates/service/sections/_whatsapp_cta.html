@@ -1,0 +1,21 @@
+<section class="container-fluid py-5" id="contact-cta">
+    <div class="container py-5">
+        <div class="whatsapp-cta wow fadeInUp" data-wow-delay="0.1s">
+            <div class="row g-4 align-items-center">
+                <div class="col-lg-8">
+                    <h2 class="text-uppercase mb-3">Not sure which package fits?</h2>
+                    <p class="mb-0">Tell us what you need{% if service %} for {{ service.title }}{% endif %} and we will suggest the right package for you.</p>
+                </div>
+                <div class="col-lg-4 text-lg-end">
+                    {% if whatsapp_url %}
+                    <a href="{{ whatsapp_url }}" class="btn btn-primary py-3 px-5 service-btn" target="_blank" rel="noopener">
+                        <i class="fa-brands fa-whatsapp me-2" aria-hidden="true"></i>Chat on WhatsApp
+                    </a>
+                    {% else %}
+                    <a href="{% url 'contact:index' %}{% if service %}?service={{ service.slug }}{% endif %}" class="btn btn-primary py-3 px-5 service-btn">Contact Us</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

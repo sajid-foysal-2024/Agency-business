@@ -829,3 +829,124 @@ section[id] {
     text-transform: uppercase;
     color: var(--bs-white);
 }
+
+
+/*** Home services: clickable titles keep the heading look ***/
+.service-title-link {
+    color: inherit;
+    text-decoration: none;
+    transition: color .3s;
+}
+
+.service-title-link:hover {
+    color: var(--bs-primary);
+}
+
+
+/*** Accepted payment logos ("We accept") ***/
+.pay-groups {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px 40px;
+}
+
+.pay-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 14px;
+}
+
+.pay-group-label {
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.pay-group-label i {
+    color: var(--bs-primary);
+}
+
+.pay-brands {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+/* White tiles: official logos are made for light backgrounds */
+.pay-brand {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 36px;
+    min-width: 58px;
+    padding: 4px 10px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .25);
+    transition: transform .3s;
+}
+
+.pay-brand:hover {
+    transform: translateY(-2px);
+}
+
+.pay-brand img {
+    max-height: 26px;
+    max-width: 90px;
+    object-fit: contain;
+}
+
+.pay-brand i {
+    font-size: 26px;
+    color: #1a1f71;   /* card brand icons read best dark on white */
+}
+
+.pay-brand-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1a1a1a;
+    white-space: nowrap;
+}
+
+.pay-accepted-pricing,
+.pay-accepted-checkout {
+    margin-top: -1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.pay-accepted-pricing .pay-groups {
+    justify-content: center;
+}
+
+.pay-accepted-checkout {
+    margin: 16px 0 0;
+}
+
+.pay-accepted-checkout .pay-groups {
+    flex-direction: column;
+    gap: 12px;
+}
+
+.pay-brands-inline {
+    margin-top: 8px;
+}
+
+.pay-brands-inline .pay-brand {
+    height: 28px;
+    min-width: 46px;
+    padding: 2px 8px;
+}
+
+.pay-brands-inline .pay-brand i {
+    font-size: 20px;
+}
+
+.pay-brands-inline .pay-brand-name {
+    font-size: 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .pay-brand { transition: none; }
+    .pay-brand:hover { transform: none; }
+}

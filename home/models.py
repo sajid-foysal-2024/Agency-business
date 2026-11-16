@@ -34,7 +34,19 @@ class SiteSetting(SingletonModel):
     # Contact
     email = models.EmailField(blank=True)
     phone = models.CharField(max_length=30, blank=True)
-    address = models.CharField(max_length=255, blank=True)
+    notification_email = models.EmailField(
+        blank=True,
+        help_text="Private: Contact form messages are emailed here. Not shown on the website. "
+                  "Uses the public email above when empty.",
+    )
+    whatsapp_number = models.CharField(
+        max_length=30, blank=True,
+        help_text="With country code, e.g. +8801712345678. Used by every \"Order Now\" button.",
+    )
+    address = models.CharField(max_length=255, blank=True,
+                               help_text="Full office address. Also used for the Google Map on the Contact page.")
+    office_label = models.CharField(max_length=100, blank=True, default="OS Agency Office",
+                                    help_text="Title shown above the address on the Contact page.")
 
     # Social links (left blank = hidden)
     facebook_url = models.URLField(blank=True)
@@ -42,6 +54,7 @@ class SiteSetting(SingletonModel):
     instagram_url = models.URLField(blank=True)
     linkedin_url = models.URLField(blank=True)
     youtube_url = models.URLField(blank=True)
+    github_url = models.URLField("GitHub URL", blank=True)
 
     # Footer
     copyright_name = models.CharField(max_length=100, blank=True)
@@ -56,7 +69,7 @@ class SiteSetting(SingletonModel):
     @property
     def social_links(self):
         """Only the social links that are filled in, ready for templates."""
-        return build_social_links(self, ["facebook_url", "x_url", "instagram_url", "linkedin_url", "youtube_url"])
+        return build_social_links(self, ["facebook_url", "x_url", "instagram_url", "linkedin_url", "github_url", "youtube_url"])
 
 
 # ---------------------------------------------------------------------------
@@ -160,17 +173,6 @@ class AboutPoint(models.Model):
 
     def __str__(self):
         return self.text
-
-
-class Service(OrderedModel):
-    title = models.CharField(max_length=100)
-    description = models.TextField()
-    image = models.ImageField(upload_to="services/", blank=True)
-    button_text = models.CharField(max_length=50, blank=True, default="Read More")
-    button_link = models.CharField(max_length=200, blank=True, help_text="Leave blank to hide the button.")
-
-    def __str__(self):
-        return self.title
 
 
 class Stat(OrderedModel):
